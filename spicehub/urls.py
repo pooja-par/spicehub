@@ -24,6 +24,6 @@ def success_view(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    #path('success/', success_view, name='success'),  # Add the success path
+    path('', include('home.urls')),
 ]
 
