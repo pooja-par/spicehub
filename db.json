@@ -1,0 +1,19 @@
+{
+    "categories": [
+      {"name": "Spices", "slug": "spices"},
+      {"name": "Herbs", "slug": "herbs"}
+    ],
+    "products": [
+      {
+        "category": "Spices",
+        "name": "Turmeric",
+        "slug": "turmeric",
+        "description": "High-quality turmeric powder.",
+        "price_per_kg": "5.00",
+        "stock": 500,
+        "image": "media/Turmeric/turmeric.jpg",
+        "json_data": {"origin": "India", "grade": "Premium"}
+      }
+    ]
+  }
+  
