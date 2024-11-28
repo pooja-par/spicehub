@@ -1,0 +1,93 @@
+[
+    {
+        "pk": 1,
+        "model": "products.product",
+        "fields": {
+            "category": 1,
+            "name": "Turmeric Powder",
+            "slug": "turmeric-powder",
+            "description": "Premium turmeric powder sourced from organic farms.",
+            "price_per_kg": "10.00",
+            "stock": 500,
+            "image": "spices/turmeric.jpg"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "products.product",
+        "fields": {
+            "category": 1,
+            "name": "Chilli Powder",
+            "slug": "chilli-powder",
+            "description": "Finest powder, steam treated of nice red color, abt. 10.000 SHU",
+            "price_per_kg": "10.00",
+            "stock": 500,
+            "image": "spices/chilli_powder.jpg"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "products.product",
+        "fields": {
+            "category": 1,
+            "name": "Ginger Powder",
+            "slug": "ginger-powder",
+            "description": "Powder of lighter and darker color as per customers requirement, steam treated.",
+            "price_per_kg": "10.00",
+            "stock": 500,
+            "image": "spices/ginger.jpg"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "products.product",
+        "fields": {
+            "category": 2,
+            "name": "Dehydrated Onion Flakes",
+            "slug": "dehydrated-onion-flakes",
+            "description": "High-quality dehydrated onion flakes, perfect for seasoning.",
+            "price_per_kg": "7.00",
+            "stock": 400,
+            "image": "dehydrated/onion_flakes.jpg"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "products.product",
+        "fields": {
+            "category": 2,
+            "name": "Dehydrated Garlic Powder",
+            "slug": "dehydrated-garlic-powder",
+            "description": "Finely ground dehydrated garlic powder for cooking.",
+            "price_per_kg": "8.50",
+            "stock": 350,
+            "image": "dehydrated/garlic_powder.jpg"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "products.product",
+        "fields": {
+            "category": 2,
+            "name": "Dehydrated Onion Powder",
+            "slug": "dehydrated-onion-powder",
+            "description": "Smooth-textured dehydrated onion powder for versatile use.",
+            "price_per_kg": "9.00",
+            "stock": 300,
+            "image": "dehydrated/onion_powder.jpg"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "products.product",
+        "fields": {
+            "category": 2,
+            "name": "Dehydrated Garlic Flakes",
+            "slug": "dehydrated-garlic-flakes",
+            "description": "Dehydrated garlic flakes for culinary applications.",
+            "price_per_kg": "9.50",
+            "stock": 250,
+            "image": "dehydrated/garlic_flakes.jpg"
+        }
+    }
+]

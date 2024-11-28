@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import CartItem
+#from .models import CartItem
 from products.models import Product
 
 # Create your views here.
@@ -9,6 +9,7 @@ def index(request):
 
     return render(request, 'home/index.html')
 
+'''
 def cart_view(request):
     session_id = request.session.session_key or request.session.create()
     cart_items = CartItem.objects.filter(session_id=session_id)
@@ -32,3 +33,4 @@ def add_to_cart(request, product_id):
         cart_item.save()
 
     return redirect('cart')
+'''
