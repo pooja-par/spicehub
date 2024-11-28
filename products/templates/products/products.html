@@ -4,16 +4,97 @@
 {% block page_header %}
     <div class="container header-container">
         <div class="row">
-            <div class="col"></div>
+            <div class="col text-center">
+                <h1 class="logo-font">Our Products</h1>
+                <p class="lead">Explore our wide range of bulk spices and herbs.</p>
+                <hr class="w-50 mb-1">
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="logo-font">Products</h2>
+                <p>Choose from a variety of premium spices and herbs.</p>
+            </div>
+        </div>
+        <!-- Category Filter Section -->
+        <div class="row mb-3">
+            <div class="col text-center">
+                <div class="btn-group" role="group">
+                    <a href="{% url 'products' %}" class="btn btn-outline-secondary {% if not selected_category %}active{% endif %}">All</a>
+                    {% for category in categories %}
+                        <a href="?category={{ category.id }}" class="btn btn-outline-secondary {% if selected_category == category.id %}active{% endif %}">
+                            {{ category.friendly_name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- Product Listing Section -->
         <div class="row">
-            <div class="col">
-                {{ products }}
+            {% for product in products %}
+                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 border-0">
+                        <!-- Product Image -->
+                        {% if product.image %}
+                            <a href="{% url 'product_detail' product.slug %}">
+                                <img class="card-img-top img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'product_detail' product.slug %}">
+                                <img class="card-img-top img-fluid" src="{% static 'images/noimage.png' %}" alt="No Image Available">
+                            </a>
+                        {% endif %}
+                        <!-- Product Info -->
+                        <div class="card-body pb-0">
+                            <h5 class="card-title mb-1">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description|truncatechars:50 }}</p>
+                        </div>
+                        <div class="card-footer bg-white pt-0 border-0 text-left">
+                            <p class="lead mb-0 text-left font-weight-bold">${{ product.price_per_kg }} / kg</p>
+                            {% if product.stock > 0 %}
+                                <small class="text-success">In Stock: {{ product.stock }} kg</small>
+                            {% else %}
+                                <small class="text-danger">Out of Stock</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Pagination Section -->
+        <div class="row">
+            <div class="col text-center">
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for page_num in paginator.page_range %}
+                                <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ page_num }}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ page_num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
             </div>
         </div>
     </div>
