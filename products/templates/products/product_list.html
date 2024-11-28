@@ -1,7 +1,0 @@
-{% for product in products %}
-<div>
-    <h2>{{ product.name }}</h2>
-    <p>{{ product.description }}</p>
-    <a href="{% url 'product_detail' product.slug %}">View Details</a>
-</div>
-{% endfor %}

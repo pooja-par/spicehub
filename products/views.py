@@ -1,11 +1,15 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from .models import Product
 
-def product_list(request):
+# Create your views here.
+
+def all_products(request):
+    """ A view to show all products, including sorting and search queries """
+
     products = Product.objects.all()
-    return render(request, 'products/product_list.html', {'products': products})
 
+    context = {
+        'products': products,
+    }
 
-def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    return render(request, 'products/product_detail.html', {'product': product})
+    return render(request, 'products/products.html', context)

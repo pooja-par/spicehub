@@ -1,8 +1,0 @@
-{% for item in cart_items %}
-<div>
-    <h2>{{ item.product.name }}</h2>
-    <p>Quantity: {{ item.quantity }}</p>
-    <p>Subtotal: ${{ item.subtotal }}</p>
-</div>
-{% endfor %}
-<p>Total: ${{ total }}</p>
