@@ -4,8 +4,8 @@
 {% block page_header %}
     <div class="container header-container">
         <div class="row">
-            <div class="col text-center">
-                <h1 class="display-4">{{ product.name }}</h1>
+            <div class="col">
+                <h2 class="logo-font text-center my-3">{{ product.name }}</h2>
             </div>
         </div>
     </div>
@@ -16,52 +16,97 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Product Image Section -->
-            <div class="col-12 col-md-6 col-lg-4 offset-lg-2">
-                <div class="image-container my-5">
+            <div class="col-12 col-md-6 col-lg-5 offset-lg-1">
+                <div class="image-container my-5 text-center">
                     {% if product.image %}
                         <a href="{{ product.image.url }}" target="_blank">
-                            <img class="card-img-top img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
+                            <img class="card-img-top img-fluid rounded shadow-sm" src="{{ product.image.url }}" alt="{{ product.name }}">
                         </a>
                     {% else %}
-                        <a href="">
-                            <img class="card-img-top img-fluid" src="{% static 'images/noimage.png' %}" alt="No Image Available">
-                        </a>
+                        <img class="card-img-top img-fluid rounded shadow-sm" src="{{ MEDIA_URL }}noimage.png" alt="{{ product.name }}">
                     {% endif %}
                 </div>
             </div>
-
+            
             <!-- Product Details Section -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-5">
                 <div class="product-details-container mb-5 mt-md-5">
-                    <h2>{{ product.name }}</h2>
-                    <p class="lead mb-0 text-left font-weight-bold">${{ product.price_per_kg }} / kg</p>
-                    <p class="mt-3">{{ product.description }}</p>
-                    
-                    {% if product.stock > 0 %}
-                        <p class="text-success font-weight-bold">In Stock: {{ product.stock }} kg</p>
-                    {% else %}
-                        <p class="text-danger font-weight-bold">Out of Stock</p>
-                    {% endif %}
+                    <h3 class="mb-3 font-weight-bold">{{ product.name }}</h3>
+                    <p class="lead text-left font-weight-bold">
+                        Price per kg: ${{ product.price_per_kg }}
+                    </p>
 
                     {% if product.category %}
-                        <p class="text-muted">Category: {{ product.category.friendly_name }}</p>
+                        <p class="small mt-1 mb-0">
+                            <a class="text-muted" href="{% url 'products' %}?category={{ product.category.name }}">
+                                <i class="fas fa-tag mr-1"></i>{{ product.category.friendly_name }}
+                            </a>
+                        </p>
                     {% endif %}
+                    
+                    <p class="mt-4">{{ product.description }}</p>
+
+                    <!-- Add to Bag Form -->
+                    <form class="form mt-4" action="{% url 'add_to_bag' product.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <!-- Quantity Input -->
+                            <div class="col-12 mb-3">
+                                <label for="id_qty_{{ product.id }}"><strong>Quantity (kg):</strong></label>
+                                <input 
+                                    class="form-control qty_input w-50 d-inline-block" 
+                                    type="number" 
+                                    name="quantity" 
+                                    value="1" 
+                                    min="0.5" 
+                                    step="0.5" 
+                                    id="id_qty_{{ product.id }}" 
+                                    data-price="{{ product.price_per_kg }}" 
+                                    oninput="updateTotalPrice(this)">
+                            </div>
+
+                            <!-- Total Price Display -->
+                            <p class="mt-2">
+                                <strong>Total Price: </strong>
+                                $<span id="total_price_{{ product.id }}">{{ product.price_per_kg }}</span>
+                            </p>
+
+                            <!-- Buttons -->
+                            <div class="col-12">
+                                <a href="{% url 'products' %}" class="btn btn-outline-secondary rounded-0">
+                                    <i class="fas fa-chevron-left"></i> Keep Shopping
+                                </a>
+                                <input type="submit" class="btn btn-primary rounded-0 text-uppercase ml-2" value="Add to Bag">
+                            </div>
+                            <input type="hidden" name="redirect_url" value="{{ request.path }}">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <!-- Additional Metadata Section -->
-        {% if product.json_data %}
-        <div class="row mt-4">
-            <div class="col-12 col-md-8 offset-md-2">
-                <h4>Additional Information</h4>
-                <ul>
-                    {% for key, value in product.json_data.items %}
-                        <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {% endif %}
     </div>
 {% endblock %}
+
+<script>
+    /**
+     * Updates the total price dynamically based on the quantity entered.
+     * @param {HTMLElement} input - The quantity input field.
+     */
+    function updateTotalPrice(input) {
+        const quantity = parseFloat(input.value) || 0;  // Handle invalid or empty input gracefully
+        const pricePerKg = parseFloat(input.getAttribute('data-price'));  // Fetch price from data attribute
+
+        // Calculate the total price
+        const totalPrice = (quantity * pricePerKg).toFixed(2);
+
+        // Find the total price element and update its value
+        const productId = input.id.split('_')[2];  // Extract product ID from input field's ID
+        const totalPriceElement = document.getElementById(`total_price_${productId}`);
+
+        if (totalPriceElement) {
+            totalPriceElement.innerText = totalPrice;
+        } else {
+            console.error(`Total price element not found for product ID: ${productId}`);
+        }
+    }
+</script>
