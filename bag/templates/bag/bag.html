@@ -52,7 +52,7 @@
                         </table>
                     </div>
                     <div class="text-right">
-                        <p class="lead font-weight-bold">Total: ${{ bag_total }}</p>
+                        <p class="lead font-weight-bold">Total: ${{ bag_total|floatformat:2 }}</p>
                         <a href="{% url 'checkout' %}" class="btn btn-black rounded-0 btn-lg">
                             Checkout
                         </a>

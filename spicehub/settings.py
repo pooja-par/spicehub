@@ -26,19 +26,11 @@ SECRET_KEY = 'django-insecure-(8s+d6ejn7sn5ihv-wjrfmu4a1u+(lc$d&gsv7+ut=$9_f_som
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-'''
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '8000-poojapar-spicehub-genmuzbcgx8.ws-eu116.gitpod.io',
-]
-'''
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '8000-poojapar-spicehub-3lkmgzckxl6.ws-eu117.gitpod.io',
-    '.gitpod.io',  # Allow all Gitpod subdomains
 ]
 
 
@@ -91,6 +83,8 @@ TEMPLATES = [
         },
     },
 ]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database for sessions
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
