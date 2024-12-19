@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '8000-poojapar-spicehub-3lkmgzckxl6.ws-eu117.gitpod.io',
     '8000-poojapar-spicehub-fsxadthnprr.ws-eu117.gitpod.io',
+    '8000-poojapar-spicehub-pnsy4hxurad.ws-eu117.gitpod.io',
 ]
 
 
