@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Email Verification Sent</h2>
+    <p>We have sent a verification email to your email address. Please check your inbox (and spam folder) for the confirmation link.</p>
+    <p>Follow the instructions in the email to activate your account.</p>
+    <a href="{% url 'home:index' %}" class="btn btn-primary mt-3">Return to Home</a>
+</div>
+{% endblock %}

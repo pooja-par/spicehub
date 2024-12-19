@@ -29,6 +29,7 @@ class Product(models.Model):
         on_delete=models.SET_NULL,
         related_name='products'
     )
+    sku = models.CharField(max_length=254, null=True, blank=True)
     name = models.CharField(max_length=254)
     slug = models.SlugField(unique=True)
     description = models.TextField()
