@@ -13,8 +13,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-if os.path.isfile('env.py'):
-    import env
+from dotenv import load_dotenv
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +40,9 @@ DEBUG = True
 #]
 
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-t31013ez2ei.ws-eu117.gitpod.io'
+    '8000-poojapar-spicehub-yr9d5ux4oac.ws-eu117.gitpod.io',
+    'spicehub.herokuapp.com',
+    'localhost'
 ]
 
 
@@ -133,24 +138,43 @@ WSGI_APPLICATION = 'spicehub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 
 '''
 DATABASES = {
     'default': dj_database_url.parse(
         os.environ.get(
             "DATABASE_URL", 
-            "postgresql://neondb_owner:DMV1kIH8sZcx@ep-tiny-brook-a2wuooiy.eu-central-1.aws.neon.tech/bath_sulk_jumbo_400161",
-        ),
-        options={'options': '-c timezone=UTC'}
+            "postgresql://neondb_owner:DMV1kIH8sZcx@ep-tiny-brook-a2wuooiy.eu-central-1.aws.neon.tech/bath_sulk_jumbo_400161"
+        )
     )
 }
 '''
+'''
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+}
+'''
+
+
+
+
+# Add additional options manually
+#DATABASES['default']['OPTIONS'] = {'options': '-c timezone=UTC'}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
