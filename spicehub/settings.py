@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+if os.path.isfile('env.py'):
+    import env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,10 +30,14 @@ SECRET_KEY = 'django-insecure-(8s+d6ejn7sn5ihv-wjrfmu4a1u+(lc$d&gsv7+ut=$9_f_som
 DEBUG = True
 
 
+#ALLOWED_HOSTS = [
+#    'localhost',
+#    '127.0.0.1',
+#    '8000-poojapar-spicehub-t31013ez2ei.ws-eu117.gitpod.io'
+#]
+
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '8000-poojapar-spicehub-925w7l3421h.ws-eu117.gitpod.io'
+    '8000-poojapar-spicehub-t31013ez2ei.ws-eu117.gitpod.io'
 ]
 
 
@@ -133,6 +140,17 @@ DATABASES = {
     }
 }
 
+'''
+DATABASES = {
+    'default': dj_database_url.parse(
+        os.environ.get(
+            "DATABASE_URL", 
+            "postgresql://neondb_owner:DMV1kIH8sZcx@ep-tiny-brook-a2wuooiy.eu-central-1.aws.neon.tech/bath_sulk_jumbo_400161",
+        ),
+        options={'options': '-c timezone=UTC'}
+    )
+}
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
