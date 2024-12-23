@@ -27,7 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', '')
+#SECRET_KEY = os.environ.get('SECRET_KEY', '')
+
+SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEVELOPMENT' in os.environ
@@ -35,7 +37,7 @@ DEBUG = 'DEVELOPMENT' in os.environ
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-X_FRAME_OPTIONS = "SAMEORIGIN"
+#X_FRAME_OPTIONS = "SAMEORIGIN"
 
 
 #ALLOWED_HOSTS = [
@@ -68,7 +70,7 @@ INSTALLED_APPS = [
     'products',
     'bag',
     'checkout',
-    'accounts',
+    'profiles',
 
     # Other
     'crispy_forms',
