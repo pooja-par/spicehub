@@ -41,7 +41,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '8000-poojapar-spicehub-yr9d5ux4oac.ws-eu117.gitpod.io',
-    'spicehub.herokuapp.com',
+    'spicehub-4df0a1a6c581.herokuapp.com',
     'localhost'
 ]
 
