@@ -1,0 +1,5 @@
+user-agent: *
+disallow: /accounts/
+disallow: /bag/
+sitemap: https://spicehub-4df0a1a6c581.herokuapp.com/sitemap.xml
+
