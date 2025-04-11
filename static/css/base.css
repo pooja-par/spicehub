@@ -1,3 +1,4 @@
+/* ==================== BASE STYLES ==================== */
 html {
     height: 100%;
 }
@@ -8,9 +9,33 @@ body {
     height: calc(100vh - 164px);
     color: #555;
     font-family: 'Lato';
+    margin: 0;
+    padding: 0;
 }
 
-/* from Bulma */
+/* ==================== HEADER FIXES ==================== */
+/* Modified divider to prevent excessive spacing */
+.b-example-divider {
+    width: 100%;
+    height: 1px; /* Reduced from 6rem */
+    background-color: rgba(0, 0, 0, .1);
+    border: solid rgba(0, 0, 0, .15);
+    border-width: 1px 0;
+    margin: 0; /* Added to prevent extra space */
+}
+
+/* Header container adjustments */
+header.text-bg-dark {
+    padding: 0.5rem 0; /* Adjusted padding */
+}
+
+header .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+/* ==================== COMPONENT STYLES ==================== */
+/* Bulma icon styles */
 .icon {
     align-items: center;
     display: inline-flex;
@@ -19,6 +44,7 @@ body {
     width: 1.5rem;
 }
 
+/* Logo styles */
 .logo-font {
     text-transform: uppercase;
 }
@@ -27,6 +53,7 @@ body {
     width: fit-content;
 }
 
+/* Button styles */
 .shop-now-button {
     background: black;
     color: white;
@@ -40,7 +67,7 @@ body {
 
 .btn-outline-black {
     background: white;
-    color: black !important; /* use important to override link colors for <a> elements */
+    color: black !important;
     border: 1px solid black;
 }
 
@@ -61,6 +88,7 @@ body {
     color: white;
 }
 
+/* Utility classes */
 .text-black {
     color: #000 !important;
 }
@@ -74,20 +102,22 @@ body {
 }
 
 .overlay {
-	height: 100%;
-	width: 100%;
-	top: 0;
-	left: 0;
-	position: fixed;
-	background: white;
-	z-index: -1;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background: white;
+    z-index: -1;
 }
 
+/* Category badges */
 a.category-badge > span.badge:hover {
     background: #212529 !important;
     color: #fff !important;
 }
 
+/* Back-to-top button */
 .btt-button {
     height: 42px;
     width: 42px;
@@ -102,7 +132,35 @@ a.category-badge > span.badge:hover {
     cursor: pointer;
 }
 
-/* ------------------------------- bootstrap toasts */
+/* ==================== BOOTSTRAP TOASTS ==================== */
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.navbar > .container,
+.navbar > .container-fluid,
+.navbar > .container-sm,
+.navbar > .container-md,
+.navbar > .container-lg,
+.navbar > .container-xl,
+.navbar > .container-xxl {
+    display: flex;
+    flex-wrap: inherit;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .message-container {
     position: fixed;
@@ -119,50 +177,27 @@ a.category-badge > span.badge:hover {
     height: 2px;
 }
 
-/* from CSS-tricks.com: https://css-tricks.com/snippets/css/css-triangle/ */
+/* CSS triangles for toasts */
 .arrow-up {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-left: 4px solid transparent;
-    border-right: 4px solid transparent; 
+    border-right: 4px solid transparent;
     border-bottom: 10px solid black;
     position: absolute;
     top: -10px;
     right: 36px;
 }
 
-/* Convenience classes - colors copied from Bootstrap */
-.arrow-primary {
-    border-bottom-color: #007bff !important;
-}
-
-.arrow-secondary {
-    border-bottom-color: #6c757d !important;
-}
-
-.arrow-success {
-    border-bottom-color: #28a745 !important;
-}
-
-.arrow-danger {
-    border-bottom-color: #dc3545 !important;
-}
-
-.arrow-warning {
-    border-bottom-color: #ffc107 !important;
-}
-
-.arrow-info {
-    border-bottom-color: #17a2b8 !important;
-}
-
-.arrow-light {
-    border-bottom-color: #f8f9fa !important;
-}
-
-.arrow-dark {
-    border-bottom-color: #343a40 !important;
-}
+/* Arrow color variants */
+.arrow-primary { border-bottom-color: #007bff !important; }
+.arrow-secondary { border-bottom-color: #6c757d !important; }
+.arrow-success { border-bottom-color: #28a745 !important; }
+.arrow-danger { border-bottom-color: #dc3545 !important; }
+.arrow-warning { border-bottom-color: #ffc107 !important; }
+.arrow-info { border-bottom-color: #17a2b8 !important; }
+.arrow-light { border-bottom-color: #f8f9fa !important; }
+.arrow-dark { border-bottom-color: #343a40 !important; }
 
 .bag-notification-wrapper {
     height: 100px;
@@ -170,45 +205,7 @@ a.category-badge > span.badge:hover {
     overflow-y: auto;
 }
 
-/* -------------------------------- Media Queries */
-
-/* Slightly larger container on xl screens */
-@media (min-width: 1200px) {
-  .container {
-    max-width: 80%;
-  }
-}
-
-/* fixed top navbar only on medium and up */
-@media (min-width: 992px) {
-    .fixed-top-desktop-only {
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 1030;
-    }
-
-    .header-container {
-        padding-top: 164px;
-    }
-}
-
-/* pad the top a bit when navbar is collapsed on mobile */
-@media (max-width: 991px) {
-    .header-container {
-        padding-top: 116px;
-    }
-
-    body {
-        height: calc(100vh - 116px);
-    }
-}
-
-body {
-    font-family: Arial, sans-serif;
-}
-
+/* ==================== NAVIGATION ==================== */
 nav ul {
     display: flex;
     flex-wrap: wrap;
@@ -229,9 +226,93 @@ nav ul li a {
     border-radius: 5px;
 }
 
-@media (max-width: 768px) {
+/* ==================== UTILITY CLASSES ==================== */
+.p-3 { padding: 1rem !important; }
+
+.text-bg-dark {
+    color: #fff !important;
+    background-color: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.d-flex { display: flex !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.align-items-center { align-items: center !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-lg-start { justify-content: flex-start !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-lg-0 { margin-bottom: 0 !important; }
+
+.text-white {
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-white-rgb), var(--bs-text-opacity)) !important;
+}
+
+.text-decoration-none { text-decoration: none !important; }
+.px-2 { padding-right: 0.5rem !important; padding-left: 0.5rem !important; }
+
+/* ==================== MEDIA QUERIES ==================== */
+/* XL screens */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 80%;
+    }
+}
+
+/* Desktop (md and up) */
+@media (min-width: 992px) {
+    .fixed-top-desktop-only {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1030;
+    }
+
+    .header-container {
+        padding-top: 164px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 991px) {
+    .header-container {
+        padding-top: 116px;
+    }
+
+    body {
+        height: calc(100vh - 116px);
+    }
+
     nav ul {
         flex-direction: column;
         align-items: center;
     }
+}
+
+.hero-section {
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.category-card {
+    transition: all 0.3s ease;
+}
+
+.shop-now-button {
+    font-weight: 600;
+    letter-spacing: 1px;
 }
