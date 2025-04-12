@@ -47,11 +47,11 @@ DEBUG = True
 #]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-poojapar-spicehub-gk1lzj4flwg.ws-eu118.gitpod.io',
+    'https://8000-poojapar-spicehub-lwbcpa9n15f.ws-eu118.gitpod.io',
     'https://your-heroku-app-name.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-gk1lzj4flwg.ws-eu118.gitpod.io',
+    '8000-poojapar-spicehub-lwbcpa9n15f.ws-eu118.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
     'localhost'
 ]
@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'bag',
     'checkout',
     'profiles',
+    'contact',
 
     # Other
     'crispy_forms',
@@ -137,6 +138,13 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'your-smtp-server.com'  # e.g., 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'info@spicehub.com'
+EMAIL_HOST_PASSWORD = 'your-email-password'
+DEFAULT_FROM_EMAIL = 'info@spicehub.com'
+CONTACT_EMAIL = 'info@spicehub.com'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True

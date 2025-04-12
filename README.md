@@ -33,6 +33,8 @@ To provide a seamless shopping experience for customers to browse and purchase h
 
 ![Admin Panel](https://github.com/pooja-par/spicehub/blob/main/static/images/admin_panel.png)
 
+- **Contact Us**: User can contact for any question, feedback or query 
+
 ## Technologies Used
 
 - **Backend**: Django (Python-based web framework)
