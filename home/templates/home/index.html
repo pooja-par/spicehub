@@ -12,7 +12,7 @@
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12 col-md-8 my-auto">
-                    <h1 class="display-3 logo-font font-weight-bold mb-4 text-light">
+                    <h1 class="display-3 logo-font font-weight-bold mb-4 text-gold">
                         Unlock the True Flavor of Authentic Spices
                     </h1>
                     <h2 class="hero-subtitle mb-4 text-light">
@@ -20,10 +20,7 @@
                     </h2>
                     <div class="my-5">
                         <a href="{% url 'contact' %}" 
-                           class="btn btn-lg text-uppercase py-3 px-5 font-weight-bold border-0" 
-                           style="background-color: #e7b100; color: black;"
-                           onmouseover="this.style.backgroundColor='#b88d00'" 
-                           onmouseout="this.style.backgroundColor='#e7b100'">
+                           class="btn btn-gold btn-lg text-uppercase py-3 px-5 font-weight-bold">
                             Get In Touch <i class="fas fa-arrow-right ml-2"></i>
                         </a>
                     </div>
@@ -32,7 +29,7 @@
         </div>
     </section>
 
-    <!-- Welcome Section 
+    <!-- Welcome Section (commented out but corrected) -->
     <section class="container my-5 py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8 text-center bg-dark-soft p-5 rounded-lg">
@@ -50,11 +47,11 @@
             </div>
         </div>
     </section>
-    -->
 
-    <!-- Featured Products Callout 
-    <section class="container-fluid dark-overlay py-5">
-        <div class="container text-center">
+    <!-- Featured Products Callout (commented out but corrected) -->
+    <section class="container-fluid bg-dark py-5 position-relative">
+        <div class="dark-overlay"></div>
+        <div class="container text-center position-relative" style="z-index: 1;">
             <h2 class="section-title mb-4 text-gold">Ready to Explore?</h2>
             <p class="lead text-light mb-5">Browse our complete collection of premium ingredients</p>
             <a href="{% url 'products' %}" class="btn btn-outline-gold btn-lg px-5 py-3">
@@ -62,5 +59,4 @@
             </a>
         </div>
     </section>
-    -->
 {% endblock %}
