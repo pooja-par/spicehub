@@ -19,7 +19,11 @@
                         Ethically sourced from farmers and trusted spice suppliers worldwide. Delivered across Europe!
                     </h2>
                     <div class="my-5">
-                        <a href="{% url 'products' %}" class="btn btn-lg btn-gold text-uppercase py-3 px-5 font-weight-bold">
+                        <a href="{% url 'contact' %}" 
+                           class="btn btn-lg text-uppercase py-3 px-5 font-weight-bold border-0" 
+                           style="background-color: #e7b100; color: black;"
+                           onmouseover="this.style.backgroundColor='#b88d00'" 
+                           onmouseout="this.style.backgroundColor='#e7b100'">
                             Get In Touch <i class="fas fa-arrow-right ml-2"></i>
                         </a>
                     </div>
@@ -28,7 +32,7 @@
         </div>
     </section>
 
-    <!-- Welcome Section -->
+    <!-- Welcome Section 
     <section class="container my-5 py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8 text-center bg-dark-soft p-5 rounded-lg">
@@ -46,9 +50,10 @@
             </div>
         </div>
     </section>
+    -->
 
-    <!-- Featured Products Callout -->
-    <section class="container-fluid bg-dark py-5">
+    <!-- Featured Products Callout 
+    <section class="container-fluid dark-overlay py-5">
         <div class="container text-center">
             <h2 class="section-title mb-4 text-gold">Ready to Explore?</h2>
             <p class="lead text-light mb-5">Browse our complete collection of premium ingredients</p>
@@ -57,4 +62,5 @@
             </a>
         </div>
     </section>
+    -->
 {% endblock %}

@@ -37,7 +37,7 @@
                 <!-- Logo -->
                 <a href="{% url 'home' %}" class="d-flex align-items-center text-white text-decoration-none">
                     <h1 class="logo-font my-0">
-                        <strong>Spice</strong> Hub
+                        <strong>Spice Hub</strong> 
                     </h1>
                 </a>
 
@@ -77,8 +77,8 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{% url 'products' %}?category=spices">Spices</a>
                             <a class="dropdown-item" href="{% url 'products' %}?category=dehydrated">Dehydrated Products</a>
-                            <a class="dropdown-item" href="{% url 'products' %}?category=fruits">Fruits</a>
-                            <a class="dropdown-item" href="{% url 'products' %}?category=herbs">Herbs</a>
+                            <!-- <a class="dropdown-item" href="{% url 'products' %}?category=fruits">Fruits</a>
+                            <a class="dropdown-item" href="{% url 'products' %}?category=herbs">Herbs</a> -->
                         </div>
                     </div>
 
@@ -92,7 +92,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
                             {% if request.user.is_authenticated %}
                                 {% if request.user.is_superuser %}
-                                    <a class="dropdown-item" href="#">Product Management</a>
+                                    <a class="dropdown-item" href="{% url 'admin:index' %}">Admin Interface</a>
                                 {% endif %}
                                 <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
                                 <div class="dropdown-divider"></div>
@@ -166,20 +166,19 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="{% url 'home' %}" class="text-white">Home</a></li>
                         <li class="mb-2"><a href="{% url 'products' %}" class="text-white">Products</a></li>
-                        <li class="mb-2"><a href="#" class="text-white">Blog</a></li>
                         <li><a href="{% url 'contact' %}" class="text-white">Contact Us</a></li>
                     </ul>
                 </div>
 
 
-                <!-- Legal Column -->
+                <!-- Legal Column 
                 <div class="col-md-4">
                     <h5 class="text-uppercase mb-3">Legal</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-white">Imprint</a></li>
                         <li><a href="#" class="text-white">Data Privacy</a></li>
                     </ul>
-                </div>
+                </div>-->
             </div>
 
             <hr class="my-4 bg-secondary">
