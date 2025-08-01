@@ -1,122 +1,101 @@
- /*==================== ENHANCED HERO SECTION ==================== */
+/* ==================== HERO SECTION ==================== */
 .hero-section {
-    position: relative;
-    z-index: 1;
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    padding: var(--section-padding);
-    /*background: url('/media/homepage_background_cropped_2.jpg') center/cover no-repeat;*/
-    background-color: var(--color-dark); /* Fallback while image loads */
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding: var(--section-padding);
+  background: 
+    url('{% static "images/spice-hero-dark.jpg" %}') center/cover no-repeat;
+  isolation: isolate;
+  overflow: hidden;
 }
 
+/* Text Container */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
 
-/* Enhanced Typography */
+/* Typography */
 .hero-title {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: 1.1;
-    margin-bottom: 1.25rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-    animation: fadeInUp 0.8s ease-out;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: var(--color-gold);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
-    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-    max-width: 36rem;
-    opacity: 0.9;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  max-width: 36rem;
+  color: var(--color-text-light);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  margin-bottom: 2.5rem;
 }
 
-/* Button Enhancements */
-.btn-gold {
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
+/* Button Styles */
+.hero-btn {
+  display: inline-block;
+  padding: 1rem 3rem;
+  background-color: var(--color-gold);
+  color: var(--color-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.btn-gold::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, 
-        var(--color-gold-light), 
-        var(--color-gold-dark));
-    z-index: -1;
-    opacity: 0;
-    transition: var(--transition-base);
+.hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
 }
 
-.btn-gold:hover::before {
-    opacity: 1;
-}
-
-/* Animation System */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(1rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ==================== RESPONSIVE ENHANCEMENTS ==================== */
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
 @media (max-width: 992px) {
-    .hero-section .col-md-8 {
-        padding: 0 2rem;
-    }
+  .hero-section {
+    text-align: center;
+  }
+  
+  .hero-title, 
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .hero-subtitle {
+    max-width: 28rem;
+  }
 }
 
 @media (max-width: 768px) {
-    .hero-section {
-        background-position: 65% center;
-    }
-    
-    .btn-lg {
-        padding: 0.875rem 2.25rem;
-    }
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem;
+  }
+  
+  .hero-btn {
+    padding: 0.875rem 2rem;
+  }
 }
 
 @media (max-width: 576px) {
-    .hero-title {
-        font-size: 2.25rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.1rem;
-    }
-    
-    .btn-lg {
-        width: 100%;
-        max-width: 20rem;
-    }
-}
-
-/* Performance Optimizations */
-.hero-section {
-    will-change: transform, opacity;
-    contain: paint;
-    backface-visibility: hidden;
-}
-
-/* Loading State */
-.hero-section.loading {
-    position: relative;
-}
-
-.hero-section.loading::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--color-dark);
-    z-index: 10;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.8; }
-    50% { opacity: 0.6; }
-    100% { opacity: 0.8; }
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-btn {
+    width: 100%;
+    max-width: 20rem;
+  }
 }
