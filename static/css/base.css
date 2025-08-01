@@ -4,10 +4,10 @@ html {
 }
 
 body {
-    background: url('/media/homepage_background_cropped.jpg') no-repeat center center fixed;
+    /*background: url('/media/homepage_background_cropped_2.jpg') no-repeat center center fixed;*/
     background-size: cover;
-    height: calc(100vh - 164px);
-    color: #555;
+    height: calc(100dvh);
+    color: #ffffff;
     font-family: 'Lato';
     margin: 0;
     padding: 0;

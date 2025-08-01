@@ -35,7 +35,7 @@ SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 DEBUG = 'DEVELOPMENT' in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 #X_FRAME_OPTIONS = "SAMEORIGIN"
 
@@ -47,11 +47,11 @@ DEBUG = False
 #]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-poojapar-spicehub-lwbcpa9n15f.ws-eu118.gitpod.io',
+    'https://8000-poojapar-spicehub-1l4e2zf7wgo.ws-eu120.gitpod.io',
     'https://your-heroku-app-name.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-lwbcpa9n15f.ws-eu118.gitpod.io',
+    '8000-poojapar-spicehub-1l4e2zf7wgo.ws-eu120.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
     'localhost'
 ]

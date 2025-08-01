@@ -12,7 +12,7 @@
         <meta name="author" content="Spice Hub Team">
     {% endblock %}
 
-    <title>Spice Hub - Your One-Stop Shop for Premium Spices and Herbs {% block extra_title %}{% endblock %}</title>
+    <title>Spice Hub - Your One-Stop Shop for High Quality Spices {% block extra_title %}{% endblock %}</title>
 
     {% block corecss %}
         <!-- Core CSS -->
@@ -29,31 +29,32 @@
         <script src="https://js.stripe.com/v3/"></script>
     {% endblock %}
   </head>
-  <body class="d-flex flex-column min-vh-100">
+  <body class="d-flex flex-column min-height: 100dvh">
     <!-- HEADER SECTION -->
     <header class="bg-dark py-2">
-        <div class="container">
+        <div class="container-fluid">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <!-- Logo -->
-                <a href="{% url 'home' %}" class="d-flex align-items-center text-white text-decoration-none">
+                <a href="{% url 'home' %}" class="d-flex align-items-right text-white text-decoration-none">
                     <h1 class="logo-font my-0">
                         <strong>Spice Hub</strong> 
                     </h1>
                 </a>
 
                 <!-- Search Form -->
-                <form method="GET" action="{% url 'products' %}" class="flex-grow-1 mx-3" style="max-width: 500px;">
+                <form method="GET" action="{% url 'products' %}" class="flex-grow-1 mx-lg-3 mx-2">
                     <div class="input-group">
                         <input class="form-control" 
-                               type="search" 
-                               name="q" 
-                               placeholder="Search spices, herbs, and more"
-                               aria-label="Search products">
-                        <div class="input-group-append">
-                            <button class="btn btn-warning" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                            type="search" 
+                            name="q" 
+                            placeholder="Search spices, herbs, and more"
+                            aria-label="Search products"
+                            autocomplete="off"
+                            spellcheck="false">
+                        <button class="btn btn-warning" type="submit" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                            <span class="d-none d-sm-inline ms-1">Search</span>
+                        </button>
                     </div>
                 </form>
 

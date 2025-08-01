@@ -1,187 +1,122 @@
-/* ==================== ROOT VARIABLES ==================== */
-:root {
-    /* Enhanced Color Palette */
-    --color-dark: #1A120B;         /* Rich dark brown (WCAG AAA) */
-    --color-dark-soft: #2C2416;    /* Soft dark brown */
-    --color-gold: #D4A017;         /* Primary gold (AAA contrast on dark) */
-    --color-gold-light: #F5C542;   /* Brighter gold (better visibility) */
-    --color-gold-dark: #B88D00;    /* Darker gold for hover states */
-    --color-text-light: #FFFFFF;   /* Pure white for max contrast */
-    --color-text-dark: #1A120B;    /* Dark text for gold backgrounds */
-    
-    /* Spacing */
-    --section-padding: 6rem 0;
-    
-    /* Effects */
-    --transition-base: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-gold: 0 0 20px rgba(212, 160, 23, 0.5);
-}
-
-/* ==================== BASE STYLES ==================== */
-body {
-    font-family: 'Lato', sans-serif;
-    color: var(--color-text-light);
-    background-color: var(--color-dark);
-    line-height: 1.7;
-    overflow-x: hidden;
-}
-
-/* ==================== HERO SECTION ==================== */
+ /*==================== ENHANCED HERO SECTION ==================== */
 .hero-section {
     position: relative;
-    min-height: 80vh;
+    z-index: 1;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
-    background: 
-        linear-gradient(135deg, rgba(26, 18, 11, 0.85) 0%, rgba(26, 18, 11, 0.95) 100%),
-        url('{% static "images/spice-hero-dark.jpg" %}') center/cover no-repeat;
     padding: var(--section-padding);
-    isolation: isolate;
+    /*background: url('/media/homepage_background_cropped_2.jpg') center/cover no-repeat;*/
+    background-color: var(--color-dark); /* Fallback while image loads */
 }
 
-.dark-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(26, 18, 11, 0.6);
-    z-index: -1;
-}
 
+/* Enhanced Typography */
 .hero-title {
     font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .hero-subtitle {
-    font-size: clamp(1.25rem, 2vw, 1.75rem);
-    font-weight: 400;
-    margin-bottom: 2.5rem;
-    max-width: 700px;
-    opacity: 0.95;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    max-width: 36rem;
+    opacity: 0.9;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-/* ==================== BUTTON SYSTEM ==================== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-base);
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border: 2px solid transparent;
-    text-decoration: none;
+/* Button Enhancements */
+.btn-gold {
     position: relative;
+    z-index: 1;
     overflow: hidden;
 }
 
-.btn-lg {
-    padding: 1rem 3rem;
-    font-size: 1.1rem;
-}
-
-.btn-gold {
-    background-color: var(--color-gold);
-    color: var(--color-text-dark) !important;
-    box-shadow: var(--shadow-md);
-}
-
-.btn-gold:hover {
-    background-color: var(--color-gold-light);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-gold);
-}
-
-.btn-outline-gold {
-    background-color: transparent;
-    color: var(--color-gold) !important;
-    border-color: var(--color-gold);
-}
-
-.btn-outline-gold:hover {
-    background-color: var(--color-gold);
-    color: var(--color-text-dark) !important;
-    box-shadow: var(--shadow-gold);
-}
-
-/* ==================== TEXT & COLOR SYSTEM ==================== */
-.text-gold {
-    color: var(--color-gold) !important;
-}
-
-.text-light {
-    color: var(--color-text-light) !important;
-}
-
-.text-dark {
-    color: var(--color-dark) !important;
-}
-
-.bg-dark {
-    background-color: var(--color-dark) !important;
-}
-
-.bg-dark-soft {
-    background-color: var(--color-dark-soft) !important;
-}
-
-/* ==================== COMPONENTS ==================== */
-.section-title {
-    position: relative;
-    padding-bottom: 1.25rem;
-    margin-bottom: 2.5rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-.section-title::after {
+.btn-gold::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: var(--color-gold);
-    border-radius: 2px;
+    inset: 0;
+    background: linear-gradient(45deg, 
+        var(--color-gold-light), 
+        var(--color-gold-dark));
+    z-index: -1;
+    opacity: 0;
+    transition: var(--transition-base);
 }
 
-.rounded-lg {
-    border-radius: 0.75rem !important;
+.btn-gold:hover::before {
+    opacity: 1;
 }
 
-/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+/* Animation System */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== RESPONSIVE ENHANCEMENTS ==================== */
 @media (max-width: 992px) {
-    :root {
-        --section-padding: 4rem 0;
-    }
-    
-    .hero-section {
-        min-height: 70vh;
-        text-align: center;
-    }
-    
-    .hero-title, .hero-subtitle {
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
+    .hero-section .col-md-8 {
+        padding: 0 2rem;
     }
 }
 
 @media (max-width: 768px) {
-    .btn-lg {
-        padding: 0.875rem 2rem;
-        font-size: 1rem;
+    .hero-section {
+        background-position: 65% center;
     }
     
-    .section-title::after {
-        width: 80px;
+    .btn-lg {
+        padding: 0.875rem 2.25rem;
     }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+        max-width: 20rem;
+    }
+}
+
+/* Performance Optimizations */
+.hero-section {
+    will-change: transform, opacity;
+    contain: paint;
+    backface-visibility: hidden;
+}
+
+/* Loading State */
+.hero-section.loading {
+    position: relative;
+}
+
+.hero-section.loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-dark);
+    z-index: 10;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.6; }
+    100% { opacity: 0.8; }
 }
