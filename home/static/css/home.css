@@ -1,110 +1,187 @@
+/* ==================== VARIABLES ==================== */
+:root {
+    --color-dark: #1A120B;
+    --color-dark-soft: #2C2416;
+    --color-gold: #D4A017;
+    --color-gold-light: #E6B325;
+    --color-text-light: #F5F5F5;
+    --section-padding: 3rem 1rem;
+}
+
 /* ==================== HERO SECTION ==================== */
 .hero-section {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  padding: var(--section-padding);
-  /*background: 
-    url('{% static "images/spice-hero-dark.jpg" %}') center/cover no-repeat;*/
-  isolation: isolate;
-  overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: var(--section-padding);
+    background: linear-gradient(rgba(0, 0, 0, 0.7), 
+                url('/media/homepage_background_cropped_2.jpg') center/cover no-repeat;
+    isolation: isolate;
+    overflow: hidden;
 }
 
-/* Text Container */
 .hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
-/* Typography */
-.hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
-  color: var(--color-gold);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+/* Adjusted Heading Sizes */
+.display-4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    color: var(--color-gold);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  max-width: 36rem;
-  color: var(--color-text-light);
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-  margin-bottom: 2.5rem;
+    font-size: 1.4rem;
+    max-width: 36rem;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    margin: 0 auto 2rem;
+}
+
+.gold-divider {
+    width: 100px;
+    height: 3px;
+    background: var(--color-gold);
+    margin: 0 auto 2rem;
 }
 
 /* Button Styles */
-.hero-btn {
-  display: inline-block;
-  padding: 1rem 3rem;
-  background-color: var(--color-gold);
-  color: var(--color-dark);
-  font-weight: 700;
-  text-transform: uppercase;
-  border-radius: 0.25rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.btn-gold {
+    background-color: var(--color-gold);
+    color: var(--color-dark);
+    border: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
-.hero-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+.btn-gold:hover {
+    background-color: var(--color-gold-light);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ==================== RESPONSIVE ADJUSTMENTS ==================== */
 @media (max-width: 992px) {
-  .hero-section {
-    text-align: center;
-  }
-  
-  .hero-title, 
-  .hero-subtitle {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .hero-subtitle {
-    max-width: 28rem;
-  }
+    .hero-section {
+        text-align: center;
+        background-attachment: scroll;
+    }
+    
+    .display-4 {
+        font-size: 2.25rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+    }
 }
 
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.25rem;
-  }
-  
-  .hero-btn {
-    padding: 0.875rem 2rem;
-  }
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .hero-content {
+        padding: 1.5rem;
+    }
 }
 
 @media (max-width: 576px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .hero-btn {
-    width: 100%;
-    max-width: 20rem;
-  }
+    .hero-section {
+        min-height: 90vh;
+    }
+
+    .display-4 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .btn-gold {
+        padding: 0.875rem 1.5rem;
+    }
 }
 
+/* ==================== CARD STYLES ==================== */
 .card-img-top {
     object-fit: cover;
     height: 200px;
+    transition: transform 0.3s ease;
 }
+
+.card-img-top:hover {
+    transform: scale(1.03);
+}
+
 .card-body {
     display: flex;
     flex-direction: column;
+    padding: 1.5rem;
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.text-gold {
+    color: var(--color-gold) !important;
+}
+
+.text-white {
+    color: var(--color-text-light) !important;
+}
+
+.mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.mx-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-5 {
+    margin-bottom: 3rem !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
 }

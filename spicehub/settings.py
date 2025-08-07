@@ -47,11 +47,11 @@ DEBUG = True
 #]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-poojapar-spicehub-ivo8p2lvj34.ws-eu120.gitpod.io',
+    'https://8000-poojapar-spicehub-dw1io9yhte1.ws-eu120.gitpod.io',
     'https://your-heroku-app-name.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-ivo8p2lvj34.ws-eu120.gitpod.io',
+    '8000-poojapar-spicehub-dw1io9yhte1.ws-eu120.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
     'localhost'
 ]

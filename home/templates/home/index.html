@@ -8,18 +8,22 @@
 {% block content %}
     <!-- Hero Section -->
     <section class="hero-section py-5">
-        <div class="container-fluid h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12 col-md-8 my-auto">
-                    <h1 class="display-3 logo-font font-weight-bold mb-4 text-gold">
-                        Unlock the True Flavor of Authentic Spices
-                    </h1>
-                    <h2 class="hero-subtitle mb-4 text-gold">
-                        Ethically sourced from farmers and trusted spice suppliers worldwide. Delivered across Europe!
-                    </h2>
-                    <div class="my-5">
+        <div class="container-fluid px-0">
+            <div class="row justify-content-center mx-0">
+                <div class="col-12 col-xl-8 text-center px-4">
+                    <div class="hero-content">
+                        <!-- Reduced h1 size from display-3 to display-4 -->
+                        <h1 class="display-4 logo-font font-weight-bold mb-4 text-gold">
+                            Unlock the True Flavor of Authentic Spices
+                        </h1>
+                        <div class="gold-divider mx-auto mb-4"></div>
+                        <!-- Added custom class for h2 with smaller size -->
+                        <h2 class="hero-subtitle mb-5 text-white" style="font-size: 1.4rem;">
+                            Ethically sourced from farmers and trusted spice suppliers worldwide.<br>
+                            Delivered across Europe!
+                        </h2>
                         <a href="{% url 'contact' %}" 
-                           class="btn btn-gold btn-lg text-uppercase py-3 px-5 font-weight-bold">
+                           class="btn btn-gold btn-lg text-uppercase py-3 px-5 font-weight-bold shadow">
                             Get In Touch <i class="fas fa-arrow-right ml-2"></i>
                         </a>
                     </div>
