@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     padding: var(--section-padding);
-    background: linear-gradient(rgba(0, 0, 0, 0.7), 
+    background: linear-gradient(rgba(0, 0, 0, 0.7)), 
                 url('/media/homepage_background_cropped_2.jpg') center/cover no-repeat;
     isolation: isolate;
     overflow: hidden;
