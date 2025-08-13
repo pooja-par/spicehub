@@ -43,8 +43,7 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <div class="mt-auto">
-                                <span class="fw-bold text-success">${{ product.price }}</span>
-                                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary btn-sm float-end">View</a>
+                                <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary btn-sm float-end">View</a>
                             </div>
                         </div>
                     </div>

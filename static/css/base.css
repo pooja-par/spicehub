@@ -269,14 +269,14 @@ nav ul li a {
     }
 
     .header-container {
-        padding-top: 164px;
+        padding-top: 80px;
     }
 }
 
 /* Mobile */
 @media (max-width: 991px) {
     .header-container {
-        padding-top: 116px;
+        padding-top: 80px;
     }
 
     body {
