@@ -35,7 +35,7 @@ SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 DEBUG = 'DEVELOPMENT' in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 #X_FRAME_OPTIONS = "SAMEORIGIN"
 
@@ -48,11 +48,11 @@ DEBUG = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-poojapar-spicehub-rt36rnrxa4x.ws-eu121.gitpod.io',
-    'https://your-heroku-app-name.herokuapp.com',  # Replace with your actual Heroku app URL
+    'https://spicehub.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
     '8000-poojapar-spicehub-rt36rnrxa4x.ws-eu121.gitpod.io',
-    'spicehub-4df0a1a6c581.herokuapp.com',
+    'spicehub.herokuapp.com',
     'localhost'
 ]
 
@@ -162,7 +162,12 @@ WSGI_APPLICATION = 'spicehub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DATABASES = {
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+}
 
+
+'''
 if 'DATABASE_URL' in os.environ:
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
@@ -174,7 +179,7 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-
+'''
 
 '''
 DATABASES = {
