@@ -23,3 +23,5 @@ stripe==11.4.0
 urllib3==1.25.7
 wheel==0.45.1
 whitenoise==6.8.2
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
