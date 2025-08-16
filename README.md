@@ -28,11 +28,11 @@ To provide a seamless shopping experience for customers to browse and purchase h
 
 - **Secure Checkout**: A streamlined checkout process ensures secure transactions.
 
-![Checkout Page](blob/main/static/images/checkoutpage.png)
+![Checkout Page](https://github.com/pooja-par/spicehub/blob/main/blob/main/static/images/checkoutpage.png)
 
 - **Admin Management**: Admins can manage products and orders via the Django Admin interface.
 
-![Admin Panel](blob/main/static/images/adminpage.png)
+![Admin Panel](https://github.com/pooja-par/spicehub/blob/main/blob/main/static/images/adminpage.png)
 
 - **Contact Us**: User can contact for any question, feedback or query 
 
