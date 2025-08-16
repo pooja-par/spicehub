@@ -132,7 +132,7 @@ Checkout flow:
 
         Order appears in admin & user profile history.
 
-        Stock or availability rules behave as intended (if implemented).
+        Stock or availability rules behave as intended.
 
 
 ## Deployment
