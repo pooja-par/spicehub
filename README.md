@@ -38,7 +38,7 @@ To provide a seamless shopping experience for customers to browse and purchase h
 
 ## Social Media Page
 
-
+![Social Media Page](https://github.com/pooja-par/spicehub/blob/main/blob/main/static/images/socialmedia.png)
 
 ## Technologies Used
 
