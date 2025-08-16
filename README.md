@@ -36,6 +36,10 @@ To provide a seamless shopping experience for customers to browse and purchase h
 
 - **Contact Us**: User can contact for any question, feedback or query 
 
+## Social Media Page
+
+
+
 ## Technologies Used
 
 - **Backend**: Django (Python-based web framework)
