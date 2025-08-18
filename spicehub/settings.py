@@ -13,8 +13,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import env
 from dotenv import load_dotenv
 load_dotenv()
+
+if os.path.isfile('env.py'):
+    import env
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -27,15 +31,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = os.environ.get('SECRET_KEY', '')
-
-SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False
+
 DEBUG = 'DEVELOPMENT' in os.environ
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 #X_FRAME_OPTIONS = "SAMEORIGIN"
 
@@ -47,11 +48,11 @@ DEBUG = False
 #]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-poojapar-spicehub-rt36rnrxa4x.ws-eu121.gitpod.io',
+    'https://8000-poojapar-spicehub-vq6ddxwz77x.ws-eu121.gitpod.io',
     'https://spicehub-4df0a1a6c581.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-rt36rnrxa4x.ws-eu121.gitpod.io',
+    '8000-poojapar-spicehub-vq6ddxwz77x.ws-eu121.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
     'localhost'
 ]
@@ -82,16 +83,16 @@ INSTALLED_APPS = [
     'crispy_forms',
 ]
 
-INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+#INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
 
 # Media -> Cloudinary
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-MEDIA_URL = "/media/"  # URL will be rewritten to Cloudinary CDN automatically
+#DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+#MEDIA_URL = "/media/"  # URL will be rewritten to Cloudinary CDN automatically
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    #'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -101,8 +102,8 @@ MIDDLEWARE = [
     
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ROOT_URLCONF = 'spicehub.urls'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -170,43 +171,18 @@ WSGI_APPLICATION = 'spicehub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
-}
 
-
-'''
 if 'DATABASE_URL' in os.environ:
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-else:
+else: 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-'''
-
-'''
-DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get(
-            "DATABASE_URL", 
-            "postgresql://neondb_owner:DMV1kIH8sZcx@ep-tiny-brook-a2wuooiy.eu-central-1.aws.neon.tech/bath_sulk_jumbo_400161"
-        )
-    )
-}
-'''
-'''
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
-'''
-
-
-
 
 # Add additional options manually
 #DATABASES['default']['OPTIONS'] = {'options': '-c timezone=UTC'}
@@ -261,7 +237,7 @@ STANDARD_DELIVERY_PERCENTAGE = 10
 STRIPE_CURRENCY = 'usd'
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
-
+STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
