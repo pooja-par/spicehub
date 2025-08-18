@@ -82,13 +82,6 @@ INSTALLED_APPS = [
     'crispy_forms',
 ]
 
-#INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
-
-# Media -> Cloudinary
-#DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-#MEDIA_URL = "/media/"  # URL will be rewritten to Cloudinary CDN automatically
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     #'whitenoise.middleware.WhiteNoiseMiddleware',
