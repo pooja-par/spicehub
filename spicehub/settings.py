@@ -27,12 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = 'DEVELOPMENT' in os.environ
-
+#DEBUG = 'DEVELOPMENT' in os.environ
+DEBUG = False
 #X_FRAME_OPTIONS = "SAMEORIGIN"
 
 
@@ -43,13 +44,14 @@ DEBUG = 'DEVELOPMENT' in os.environ
 #]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-poojapar-spicehub-vq6ddxwz77x.ws-eu121.gitpod.io',
+    'https://8000-poojapar-spicehub-e3pm18btkcx.ws-eu121.gitpod.io',
     'https://spicehub-4df0a1a6c581.herokuapp.com',  # Replace with your actual Heroku app URL
 ]
 ALLOWED_HOSTS = [
-    '8000-poojapar-spicehub-vq6ddxwz77x.ws-eu121.gitpod.io',
+    '8000-poojapar-spicehub-e3pm18btkcx.ws-eu121.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
-    'localhost'
+    'localhost',
+    '127.0.0.1'
 ]
 
 
@@ -78,6 +80,9 @@ INSTALLED_APPS = [
     'crispy_forms',
 ]
 
+#INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -89,6 +94,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
 ]
+
+"""
+# Media → Cloudinary
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+MEDIA_URL = "/media/"
+CLOUDINARY_STORAGE = {"SECURE": True}  # https URLs
+"""
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -215,10 +227,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'media'),  # include media assets
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Use external storage for user-uploaded files in production
+DEFAULT_FILE_STORAGE = os.environ.get(
+    'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage'
+)
 
 FREE_DELIVERY_THRESHOLD = 30
 STANDARD_DELIVERY_PERCENTAGE = 10
