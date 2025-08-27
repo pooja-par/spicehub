@@ -22,26 +22,16 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
+SECRET_KEY = os.environ.get('SECRET_KEY')
+#SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-#DEBUG = 'DEVELOPMENT' in os.environ
-DEBUG = True
-#X_FRAME_OPTIONS = "SAMEORIGIN"
-
-
-#ALLOWED_HOSTS = [
-#    'localhost',
-#    '127.0.0.1',
-#    '8000-poojapar-spicehub-t31013ez2ei.ws-eu117.gitpod.io'
-#]
+#DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
@@ -82,8 +72,7 @@ INSTALLED_APPS = [
     'crispy_forms',
 ]
 
-#INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
-
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,19 +86,8 @@ MIDDLEWARE = [
     
 ]
 
-"""
-# Media → Cloudinary
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-MEDIA_URL = "/media/"
-CLOUDINARY_STORAGE = {"SECURE": True}  # https URLs
-"""
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ROOT_URLCONF = 'spicehub.urls'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 TEMPLATES = [
     {
@@ -137,9 +115,30 @@ TEMPLATES = [
     },
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database for sessions
+WSGI_APPLICATION = 'spicehub.wsgi.application'
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+#Crispy
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
+
+# --------------------------------------------------------------------------------------
+# Database (robust: Postgres via DATABASE_URL, fallback to SQLite locally)
+# --------------------------------------------------------------------------------------
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=not DEBUG,
+    )
+}
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# --------------------------------------------------------------------------------------
+# Auth / Allauth
+# --------------------------------------------------------------------------------------
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -149,48 +148,86 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = ""  # "mandatory" / "optional" if you want email verify
+ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
+ACCOUNT_USERNAME_MIN_LENGTH = 4
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+
+
+# --------------------------------------------------------------------------------------
+# Email (dev defaults)
+# --------------------------------------------------------------------------------------
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'your-smtp-server.com'  # e.g., 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'info@spicehub.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
+#EMAIL_HOST = 'your-smtp-server.com'  # e.g., 'smtp.gmail.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'info@spicehub.com'
+#EMAIL_HOST_PASSWORD = 'your-email-password'
 DEFAULT_FROM_EMAIL = 'info@spicehub.com'
 CONTACT_EMAIL = 'info@spicehub.com'
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = ''
-ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
-ACCOUNT_USERNAME_MIN_LENGTH = 4
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
 
-WSGI_APPLICATION = 'spicehub.wsgi.application'
+# --------------------------------------------------------------------------------------
+# Static files (WhiteNoise)  — DO NOT put 'media' in STATICFILES_DIRS
+# --------------------------------------------------------------------------------------
+
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Helpful in dev to avoid warnings; harmless in prod
+if DEBUG:
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
 
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+# --------------------------------------------------------------------------------------
+# Media files
+# --------------------------------------------------------------------------------------
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Use Cloudinary automatically if CLOUDINARY_URL is present (any env)
+if os.environ.get("CLOUDINARY_URL"):
+    INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    CLOUDINARY_STORAGE = {"SECURE": True}
+else:
+    # Local/dev (or Render with a Disk) uses filesystem storage
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
-else: 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# --------------------------------------------------------------------------------------
+# Security (sane defaults for prod)
+# --------------------------------------------------------------------------------------
 
-# Add additional options manually
-#DATABASES['default']['OPTIONS'] = {'options': '-c timezone=UTC'}
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --------------------------------------------------------------------------------------
+# Stripe (from env; test keys locally)
+# --------------------------------------------------------------------------------------
+STRIPE_CURRENCY = "usd"
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY", "")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
+STRIPE_WH_SECRET = os.getenv("STRIPE_WH_SECRET", "")
+
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database for sessions
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -225,34 +262,5 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'media'),  # include media assets
-]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Use external storage for user-uploaded files in production
-DEFAULT_FILE_STORAGE = os.environ.get(
-    'DEFAULT_FILE_STORAGE', 'django.core.files.storage.FileSystemStorage'
-)
-
 FREE_DELIVERY_THRESHOLD = 30
 STANDARD_DELIVERY_PERCENTAGE = 10
-
-STRIPE_CURRENCY = 'usd'
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
-STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-ACCOUNT_SIGNUP_REDIRECT_URL = '/'
-
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
