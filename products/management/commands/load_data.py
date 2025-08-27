@@ -2,10 +2,13 @@
 import json, os
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from products.models import Category, Product
+
+def field_names(model):
+    return {f.name for f in model._meta.get_fields()}
 
 class Command(BaseCommand):
     help = "Create superuser (from env) and load categories/products from fixtures. Idempotent."
@@ -33,6 +36,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def ensure_initial_data(self, force=False):
+        # Skip if there is already data (unless --force)
         if not force and (Category.objects.exists() or Product.objects.exists()):
             self.stdout.write("Initial data present; skipping fixtures.")
             return
@@ -44,62 +48,60 @@ class Command(BaseCommand):
         if not categories_fp or not products_fp:
             raise CommandError("categories.json/products.json not found. Put them in products/fixtures/.")
 
-        def load_json(p: Path):
-            with open(p, "r", encoding="utf-8") as f:
-                return json.load(f)
+        def load_json(path: Path):
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            # Support Django-fixture style OR plain list of dicts
+            return [item.get("fields", item) for item in data]
 
-        categories_data = load_json(categories_fp)
-        products_data   = load_json(products_fp)
+        cats_data = load_json(categories_fp)
+        prods_data = load_json(products_fp)
 
-        def take_fields(item):
-            # supports Django fixture style or plain dicts
-            return item.get("fields", item)
+        cat_fields = field_names(Category)
+        prod_fields = field_names(Product)
 
-        # Create categories
-        for raw in categories_data:
-            c = take_fields(raw)
+        # --- Categories ---
+        for c in cats_data:
             name = c["name"]
-            slug = c.get("slug") or name.lower().replace(" ", "-")
-            Category.objects.get_or_create(name=name, defaults={"slug": slug})
+            defaults = {}
+            if "slug" in cat_fields and "slug" in c:
+                defaults["slug"] = c["slug"]
+            if "friendly_name" in cat_fields and "friendly_name" in c:
+                defaults["friendly_name"] = c["friendly_name"]
+            Category.objects.get_or_create(name=name, defaults=defaults)
 
-        cat_map = {c.name: c for c in Category.objects.all()}
+        # Build lookups
+        cats_by_name = {c.name: c for c in Category.objects.all()}
+        cats_by_slug = {}
+        if "slug" in cat_fields:
+            cats_by_slug = {getattr(c, "slug", None): c for c in Category.objects.all() if getattr(c, "slug", None)}
 
-        # Figure out product fields available on your model
-        prod_fields = {f.name for f in Product._meta.get_fields()}
+        # Decide which price field your Product has
         price_field = "price_per_kg" if "price_per_kg" in prod_fields else ("price" if "price" in prod_fields else None)
-        has_json_data = "json_data" in prod_fields
-        has_image = "image" in prod_fields
 
-        created = 0
-        for raw in products_data:
-            p = take_fields(raw)
+        # --- Products ---
+        for p in prods_data:
             name = p["name"]
-            slug = p.get("slug") or name.lower().replace(" ", "-")
-            cat_name = p.get("category") or p.get("category_name")
-            if not cat_name:
-                raise CommandError(f"Product '{name}' missing 'category' field")
-            category = cat_map.get(cat_name) or Category.objects.get(name=cat_name)
+            # Category may be referenced by name or slug in your JSON
+            cat_key = p.get("category") or p.get("category_name") or p.get("category_slug")
+            category = cats_by_name.get(cat_key) or cats_by_slug.get(cat_key)
+            if not category:
+                raise CommandError(f"Cannot find Category for product '{name}' using key '{cat_key}'")
 
-            defaults = {
-                "slug": slug,
-                "description": p.get("description", ""),
-                "stock": p.get("stock", 0),
-            }
+            defaults = {}
+            if "slug" in prod_fields:
+                defaults["slug"] = p.get("slug") or name.lower().replace(" ", "-")
+            if "description" in prod_fields:
+                defaults["description"] = p.get("description", "")
+            if "stock" in prod_fields:
+                defaults["stock"] = p.get("stock", 0)
             if price_field:
                 defaults[price_field] = p.get(price_field) or p.get("price") or 0
-
-            if has_image and "image" in p:
-                # If you use Cloudinary, store a Cloudinary public_id or URL here
-                defaults["image"] = p["image"]
-
-            if has_json_data and "json_data" in p:
+            if "image" in prod_fields and "image" in p:
+                defaults["image"] = p["image"]  # Use a Cloudinary URL or public_id if you deploy with Cloudinary
+            if "json_data" in prod_fields and "json_data" in p:
                 defaults["json_data"] = p["json_data"]
 
-            obj, was_created = Product.objects.get_or_create(
-                name=name,
-                category=category,
-                defaults=defaults,
-            )
-            created += 1 if was_created else 0
+            Product.objects.get_or_create(name=name, category=category, defaults=defaults)
 
-        self.stdout.write(self.style.SUCCESS(f"Fixtures loaded. New products: {created}"))
+        self.stdout.write(self.style.SUCCESS("Fixtures loaded successfully."))
