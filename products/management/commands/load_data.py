@@ -7,18 +7,42 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from products.models import Category, Product
 
-def field_names(model):
+def model_fields(model):
     return {f.name for f in model._meta.get_fields()}
 
+def normalize_list(data, top_key=None):
+    """
+    Accepts:
+    - a plain list of objects
+    - a Django-style fixture list [ {"model": "...", "pk": ..., "fields": {...}}, ... ]
+    - a dict with a top-level key (e.g. {"categories": [...]}) if top_key is provided
+    Returns list of dicts: {"_pk": pk or None, **fields}
+    """
+    if isinstance(data, dict) and top_key and top_key in data:
+        data = data[top_key]
+    if not isinstance(data, list):
+        raise CommandError("Fixture must be a list or a dict containing a list under the expected key.")
+    out = []
+    for item in data:
+        if isinstance(item, dict) and "fields" in item:
+            fields = dict(item["fields"])
+            pk = item.get("pk") or item.get("id")
+        else:
+            fields = dict(item)
+            pk = item.get("id") or item.get("pk")
+        fields["_pk"] = pk
+        out.append(fields)
+    return out
+
 class Command(BaseCommand):
-    help = "Create superuser (from env) and load categories/products from fixtures. Idempotent."
+    help = "Create superuser (from env) and load categories/products (idempotent). Supports name, slug, or numeric category references."
 
     def add_arguments(self, parser):
-        parser.add_argument("--force", action="store_true", help="Force reload even if data exists")
+        parser.add_argument("--force", action="store_true", help="Force re-load (still idempotent)")
 
     def handle(self, *args, **opts):
         self.ensure_superuser()
-        self.ensure_initial_data(force=opts["force"])
+        self.load_categories_and_products(force=opts["force"])
 
     def ensure_superuser(self):
         User = get_user_model()
@@ -35,56 +59,66 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Superuser '{u}' created."))
 
     @transaction.atomic
-    def ensure_initial_data(self, force=False):
-        # Skip if there is already data (unless --force)
-        if not force and (Category.objects.exists() or Product.objects.exists()):
-            self.stdout.write("Initial data present; skipping fixtures.")
-            return
-
+    def load_categories_and_products(self, force=False):
         base = Path(settings.BASE_DIR)
         fx_dir = base / "products" / "fixtures"
+
         categories_fp = next((p for p in [fx_dir/"categories.json", base/"categories.json"] if p.exists()), None)
         products_fp   = next((p for p in [fx_dir/"products.json",   base/"products.json"]   if p.exists()), None)
         if not categories_fp or not products_fp:
-            raise CommandError("categories.json/products.json not found. Put them in products/fixtures/.")
+            raise CommandError("categories.json/products.json not found. Put them under products/fixtures/.")
 
-        def load_json(path: Path):
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            # Support Django-fixture style OR plain list of dicts
-            return [item.get("fields", item) for item in data]
+        # Load raw JSON
+        with open(categories_fp, "r", encoding="utf-8") as f:
+            cats_raw = json.load(f)
+        with open(products_fp, "r", encoding="utf-8") as f:
+            prods_raw = json.load(f)
 
-        cats_data = load_json(categories_fp)
-        prods_data = load_json(products_fp)
+        cats_list  = normalize_list(cats_raw,  top_key="categories")
+        prods_list = normalize_list(prods_raw, top_key="products")
 
-        cat_fields = field_names(Category)
-        prod_fields = field_names(Product)
+        cat_fields = model_fields(Category)
+        prod_fields = model_fields(Product)
 
-        # --- Categories ---
-        for c in cats_data:
+        # Create/update categories idempotently; remember JSON pk -> Category
+        pk_to_category = {}
+        name_to_category = {}
+        slug_to_category = {}
+
+        for c in cats_list:
             name = c["name"]
             defaults = {}
             if "slug" in cat_fields and "slug" in c:
                 defaults["slug"] = c["slug"]
             if "friendly_name" in cat_fields and "friendly_name" in c:
                 defaults["friendly_name"] = c["friendly_name"]
-            Category.objects.get_or_create(name=name, defaults=defaults)
 
-        # Build lookups
-        cats_by_name = {c.name: c for c in Category.objects.all()}
-        cats_by_slug = {}
-        if "slug" in cat_fields:
-            cats_by_slug = {getattr(c, "slug", None): c for c in Category.objects.all() if getattr(c, "slug", None)}
+            cat_obj, _ = Category.objects.get_or_create(name=name, defaults=defaults)
+            pk = c.get("_pk")
+            if pk is not None:
+                try:
+                    pk_to_category[int(pk)] = cat_obj
+                except Exception:
+                    pass  # ignore non-int pk
 
-        # Decide which price field your Product has
+            name_to_category[name] = cat_obj
+            if "slug" in cat_fields and getattr(cat_obj, "slug", None):
+                slug_to_category[getattr(cat_obj, "slug")] = cat_obj
+
+        # Decide product price field
         price_field = "price_per_kg" if "price_per_kg" in prod_fields else ("price" if "price" in prod_fields else None)
 
-        # --- Products ---
-        for p in prods_data:
+        created = 0
+        for p in prods_list:
             name = p["name"]
-            # Category may be referenced by name or slug in your JSON
+
+            # Resolve category reference: numeric pk OR name OR slug
             cat_key = p.get("category") or p.get("category_name") or p.get("category_slug")
-            category = cats_by_name.get(cat_key) or cats_by_slug.get(cat_key)
+            category = None
+            if isinstance(cat_key, int) or (isinstance(cat_key, str) and cat_key.isdigit()):
+                category = pk_to_category.get(int(cat_key))
+            if not category and isinstance(cat_key, str):
+                category = name_to_category.get(cat_key) or slug_to_category.get(cat_key)
             if not category:
                 raise CommandError(f"Cannot find Category for product '{name}' using key '{cat_key}'")
 
@@ -98,10 +132,16 @@ class Command(BaseCommand):
             if price_field:
                 defaults[price_field] = p.get(price_field) or p.get("price") or 0
             if "image" in prod_fields and "image" in p:
-                defaults["image"] = p["image"]  # Use a Cloudinary URL or public_id if you deploy with Cloudinary
+                # Best: use a Cloudinary URL or public_id here for Render/Heroku
+                defaults["image"] = p["image"]
             if "json_data" in prod_fields and "json_data" in p:
                 defaults["json_data"] = p["json_data"]
 
-            Product.objects.get_or_create(name=name, category=category, defaults=defaults)
+            obj, was_created = Product.objects.get_or_create(
+                name=name,
+                category=category,
+                defaults=defaults,
+            )
+            created += 1 if was_created else 0
 
-        self.stdout.write(self.style.SUCCESS("Fixtures loaded successfully."))
+        self.stdout.write(self.style.SUCCESS(f"Loaded fixtures. New products created: {created}"))
