@@ -1,7 +1,19 @@
 from django.contrib import admin
+from django import forms
+
 from .models import Product, Category
+from .widgets import CloudinarySelectWidget
+
+class ProductAdminForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = "__all__"
+        widgets = {
+            "image": CloudinarySelectWidget(),
+        }
 
 class ProductAdmin(admin.ModelAdmin):
+    form = ProductAdminForm
     list_display = (
         'name',
         'slug',
