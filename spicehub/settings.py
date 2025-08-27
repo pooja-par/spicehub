@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary  # ← add this import
 if os.path.isfile('env.py'):
     import env
 
@@ -30,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 #SECRET_KEY = "zs%ahn%f)qn_bx=6u((w-qaqxidv1#1aw%c3$q(o7suc4fd&2t"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
+
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 CSRF_TRUSTED_ORIGINS = [
@@ -197,6 +198,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Use Cloudinary automatically if CLOUDINARY_URL is present (any env)
 if os.environ.get("CLOUDINARY_URL"):
+    cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True,
+    )
     INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
     CLOUDINARY_STORAGE = {"SECURE": True}
