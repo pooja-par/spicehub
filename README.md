@@ -45,7 +45,7 @@ To provide a seamless shopping experience for customers to browse and purchase h
 - **Backend**: Django (Python-based web framework)
 - **Frontend**: HTML, CSS, JavaScript
 - **Database**: SQLite (default; can be replaced with PostgreSQL in production)
-- **Deployment**: Heroku for hosting the application
+- **Deployment**:Render for hosting the application
 - **Other Tools**: Django Admin for product and order management
 
 ## Usage
@@ -112,9 +112,9 @@ Browsers: Latest Chrome, Firefox, Safari, Edge. Check layout & checkout.
 # Backend Manual Tests
 
 - Data & Migrations
-Applied migration to both, github and heroku using python command
+Applied migration to both, github and Render using python command and manually on Render respectively. 
 
-Fixtures present: Load categories.json then products.json (local & Heroku).
+Fixtures present: Load categories.json then products.json (local & Render).
 
 Sanity: No missing table errors; /admin shows Products, Categories, Featured.
 
@@ -139,9 +139,50 @@ Checkout flow:
         Stock or availability rules behave as intended.
 
 
+## Local Development Setup
+
+### Prerequisites
+- Python 3.10+
+- Git
+- virtualenv
+- Stripe account with test API keys
+- Cloudinary account for media storage
+
+
+### Setup Steps
+1. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Set environment variables (replace with your values):
+   ```bash
+   export SECRET_KEY='your-secret-key'
+   export STRIPE_PUBLIC_KEY='your-stripe-public-key'
+   export STRIPE_SECRET_KEY='your-stripe-secret-key'
+   export CLOUDINARY_CLOUD_NAME='your-cloudinary-cloud-name'
+   export CLOUDINARY_API_KEY='your-cloudinary-api-key'
+   export CLOUDINARY_API_SECRET='your-cloudinary-api-secret'
+   ```
+4. Apply database migrations:
+   ```bash
+   python manage.py migrate
+   ```
+5. Start the development server:
+   ```bash
+   python manage.py runserver
+   ```
+   
+- Deployed website on Render is: https://spicehub.onrender.com/
+
+
 ## Deployment
 
-This project was deployed on Heroku.
+This project was deployed on Render.
 
 Steps for deployment:
 1. Clone the repository:
@@ -151,9 +192,11 @@ Steps for deployment:
 2. Install dependencies:
     pip install -r requirements.txt
 
-3. Create a new Heroku app and link it to the repository.
+3. Create a new Render app and link it to the repository.
 4. Configure the app settings and environment variables.
-5. Deploy the application using Heroku’s deployment options.
+5. Deploy the application using Render’s deployment options.
+
+
 
 ## Validator Testing
 HTML: Passed through the W3C validator with no errors.
