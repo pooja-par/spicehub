@@ -176,8 +176,6 @@ Checkout flow:
    ```bash
    python manage.py runserver
    ```
-   
-- Deployed website on Render is: https://spicehub.onrender.com/
 
 
 ## Deployment
@@ -196,6 +194,7 @@ Steps for deployment:
 4. Configure the app settings and environment variables.
 5. Deploy the application using Render’s deployment options.
 
+- Deployed website on Render is: https://spicehub.onrender.com/
 
 
 ## Validator Testing
