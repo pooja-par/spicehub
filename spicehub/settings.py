@@ -129,6 +129,7 @@ WSGI_APPLICATION = 'spicehub.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
 
+
 # Database
 # Use the Render environment variable to determine the database path
 if os.environ.get("CLOUDINARY_URL"):
@@ -146,6 +147,15 @@ DATABASES = {
         conn_max_age=600,
     )
 }
+'''
+
+# Database
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
+}'''
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -1,4 +1,4 @@
-#!C:\Users\mayan\OneDrive\Pooja_Workspace\Project5\spicehub\venv\Scripts\python.exe
+#!C:\Pooja_Workplace\P5\spicehub\venv\Scripts\python.exe
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 
