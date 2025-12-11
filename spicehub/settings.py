@@ -15,16 +15,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if os.path.isfile('env.py'):
     import env
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY is missing — set it in environment variables")
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 ALLOWED_HOSTS = [
     '8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
@@ -130,9 +130,19 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
 
 # Database
+# Use the Render environment variable to determine the database path
+if os.environ.get("CLOUDINARY_URL"):
+    # If deployed (CLOUDINARY_URL is set as an env var), use the persistent disk path
+    DATABASE_PATH = "/var/data/db.sqlite3"
+else:
+    # If running locally, use the default project root path
+    DATABASE_PATH = BASE_DIR / 'db.sqlite3'
+
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        # Force the database configuration to point to the determined SQLite path
+        default=f"sqlite:///{DATABASE_PATH}",
         conn_max_age=600,
     )
 }
