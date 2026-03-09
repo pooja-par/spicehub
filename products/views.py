@@ -8,7 +8,6 @@ from .models import Product, Category
 from .forms import ProductForm
 
 
-# Create your views here.
 def all_products(request):
     """ A view to show all products, including sorting and search queries """
 
@@ -76,7 +75,6 @@ def _require_superuser(request):
 @login_required
 def add_product(request):
     """ Add a product to the store """
-    """Add a product to the store."""
     if not _require_superuser(request):
         return redirect(reverse('home'))
 
