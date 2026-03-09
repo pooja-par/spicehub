@@ -198,7 +198,12 @@ else:
 
 # Security
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = not DEBUG
+#SECURE_SSL_REDIRECT = not DEBUG
+# Default to no forced HTTPS redirect unless explicitly enabled by environment.
+# This prevents platform HTTP health checks from being redirected and marking
+# the service unhealthy (e.g., Render returning Bad Gateway when all instances
+# fail health checks).
+SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 

@@ -14,8 +14,9 @@ class CloudinaryImageSelectWidget(forms.Select):
     """Widget that displays Cloudinary images with preview"""
     
     def __init__(self, attrs=None):
-        choices = self.get_cloudinary_images()
-        super().__init__(attrs=attrs, choices=choices)
+        #choices = self.get_cloudinary_images()
+        #super().__init__(attrs=attrs, choices=choices)
+        super().__init__(attrs=attrs, choices=[("", "Select an image")])
     
     def get_cloudinary_images(self):
         """Fetch images from Cloudinary"""
@@ -32,6 +33,9 @@ class CloudinaryImageSelectWidget(forms.Select):
     
     def render(self, name, value, attrs=None, renderer=None):
         output = []
+
+        # Load choices lazily when the field is rendered.
+        self.choices = self.get_cloudinary_images()
         
         # Render the select dropdown
         select_html = super().render(name, value, attrs, renderer)
