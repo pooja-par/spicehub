@@ -26,19 +26,31 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-ALLOWED_HOSTS = [
+_default_allowed_hosts = [
     '8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
-    "spicehub.onrender.com",
+    'spicehub.onrender.com',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
 ]
+
+# Optional env override (comma-separated). Handles accidental http(s) prefixes.
+raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
+if raw_allowed_hosts:
+    parsed_hosts = []
+    for host in raw_allowed_hosts.split(','):
+        cleaned = host.strip().replace('https://', '').replace('http://', '').strip('/')
+        if cleaned:
+            parsed_hosts.append(cleaned)
+    ALLOWED_HOSTS = parsed_hosts
+else:
+    ALLOWED_HOSTS = _default_allowed_hosts
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
     'https://spicehub-4df0a1a6c581.herokuapp.com',
-    "https://spicehub.onrender.com",
-    "https://127.0.0.1:8000"
+    'https://spicehub.onrender.com',
+    'https://127.0.0.1:8000',
 ]
 
 # Add local dev origins if running locally

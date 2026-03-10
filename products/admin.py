@@ -30,7 +30,7 @@ class CloudinaryImageSelectWidget(forms.Select):
         except Exception as err:
             logger.exception("Unexpected error while loading Cloudinary images: %s", err)
             return [("", "Error loading images")]
-    
+  
     def render(self, name, value, attrs=None, renderer=None):
         output = []
 
