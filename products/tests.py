@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
@@ -98,7 +99,7 @@ class ProductManagementViewsTests(TestCase):
                 'description': self.product.description,
                 'price_per_kg': '24.00',
                 'stock': self.product.stock,
-            }
+            },
         )
 
         self.assertEqual(response.status_code, 302)
@@ -110,7 +111,20 @@ class ProductManagementViewsTests(TestCase):
         self.client.login(username='shopper', password='testpass123')
 
         add_response = self.client.get(reverse('add_product'))
-@@ -178,26 +189,69 @@ class ProductCustomLogicTests(TestCase):
+        edit_response = self.client.get(reverse('edit_product', args=[self.product.slug]))
+
+        self.assertEqual(add_response.status_code, 302)
+        self.assertEqual(edit_response.status_code, 302)
+
+
+class ProductCustomLogicTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='spice', friendly_name='Spice')
+
+    def test_critical_threshold_must_be_lower_than_low_stock_threshold(self):
+        product = Product(
+            category=self.category,
+            sku='SKU-13',
             name='Paprika',
             slug='paprika',
             description='Mild',
@@ -136,7 +150,7 @@ class ProductManagementViewsTests(TestCase):
         )
 
         with self.assertRaises(ValidationError):
-             product.full_clean()
+            product.full_clean()
     def test_model_save_generates_unique_slug_when_missing(self):
         first = Product.objects.create(
             category=self.category,
