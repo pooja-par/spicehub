@@ -62,6 +62,7 @@ if DEBUG:
     ]
 """
 # Application definition
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,7 +77,48 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     
-@@ -109,118 +121,123 @@ TEMPLATES = [
+    # Local apps
+    'home',
+    'products',
+    'bag',
+    'checkout',
+    'profiles',
+    'contact',
+    'featured',
+
+    # Other
+    'crispy_forms',
+]
+
+# Cloudinary apps (conditionally added later)
+if os.environ.get("CLOUDINARY_URL"):
+    INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+
+SITE_ID = 1
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',  # Remove for older allauth versions
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'spicehub.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request', # required by allauth
