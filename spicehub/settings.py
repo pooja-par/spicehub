@@ -32,7 +32,7 @@ _default_allowed_hosts = [
     'spicehub.onrender.com',
     'localhost',
     '127.0.0.1',
-]
+    ]
 
 # Optional env override (comma-separated). Handles accidental http(s) prefixes.
 raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
@@ -76,48 +76,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     
-    # Local apps
-    'home',
-    'products',
-    'bag',
-    'checkout',
-    'profiles',
-    'contact',
-    'featured',
-
-    # Other
-    'crispy_forms',
-]
-
-# Cloudinary apps (conditionally added later)
-if os.environ.get("CLOUDINARY_URL"):
-    INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
-
-SITE_ID = 1
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',  # Remove for older allauth versions
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-ROOT_URLCONF = 'spicehub.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
-            os.path.join(BASE_DIR, 'templates', 'allauth'),
-        ],
-        'APP_DIRS': True,
-        'OPTIONS': {
+@@ -109,118 +121,123 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request', # required by allauth
@@ -143,31 +102,21 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
 
 
 # Database
-# Use the Render environment variable to determine the database path
-if os.environ.get("CLOUDINARY_URL"):
-    # If deployed (CLOUDINARY_URL is set as an env var), use the persistent disk path
-    DATABASE_PATH = "/var/data/db.sqlite3"
+# Priority:
+# 1) DATABASE_URL if provided (Postgres/managed DB on platform)
+# 2) SQLite at /var/data when that mount exists (Render persistent disk)
+# 3) Local SQLite file in project root
+render_sqlite_path = Path('/var/data/db.sqlite3')
+if render_sqlite_path.parent.exists():
+    default_db_url = f"sqlite:///{render_sqlite_path}"
 else:
-    # If running locally, use the default project root path
-    DATABASE_PATH = BASE_DIR / 'db.sqlite3'
-
-
+    default_db_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
 DATABASES = {
     "default": dj_database_url.config(
-        # Force the database configuration to point to the determined SQLite path
-        default=f"sqlite:///{DATABASE_PATH}",
+        default=default_db_url,
         conn_max_age=600,
     )
 }
-'''
-
-# Database
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}'''
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -195,7 +144,15 @@ CONTACT_EMAIL = 'info@spicehub.com'
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Use non-manifest static storage by default to avoid hard 500s when a platform
+# starts the app before/without running collectstatic.
+# Set USE_MANIFEST_STATIC_FILES=true to enforce manifest-based hashed assets.
+USE_MANIFEST_STATIC_FILES = os.getenv("USE_MANIFEST_STATIC_FILES", "False").lower() == "true"
+if USE_MANIFEST_STATIC_FILES:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Media files
 MEDIA_URL = '/media/'
@@ -210,12 +167,13 @@ else:
 
 # Security
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-#SECURE_SSL_REDIRECT = not DEBUG
+
 # Default to no forced HTTPS redirect unless explicitly enabled by environment.
 # This prevents platform HTTP health checks from being redirected and marking
 # the service unhealthy (e.g., Render returning Bad Gateway when all instances
 # fail health checks).
 SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
+
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
