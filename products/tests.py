@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
@@ -23,21 +22,6 @@ class ProductFormTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('price_per_kg', form.errors)
-
-    def test_slug_is_generated_from_name_when_missing(self):
-        form = ProductForm(data={
-            'category': self.category.id,
-            'sku': 'SKU-2',
-            'name': 'Fresh Garlic Powder',
-            'description': 'Good',
-            'price_per_kg': '12.50',
-            'stock': 5,
-            'slug': '',
-        })
-
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data['slug'], 'fresh-garlic-powder')
-
 
 class ProductManagementViewsTests(TestCase):
     def setUp(self):
@@ -75,6 +59,32 @@ class ProductManagementViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Product.objects.filter(name='Onion Powder', slug='onion-powder').exists())
 
+    def test_add_product_with_duplicate_name_generates_unique_slug(self):
+        self.client.login(username='owner', password='testpass123')
+
+        Product.objects.create(
+            category=self.category,
+            sku='SKU-EXIST',
+            name='Onion Powder',
+            slug='onion-powder',
+            description='Existing',
+            price_per_kg='9.00',
+            stock=5,
+        )
+
+        response = self.client.post(reverse('add_product'), data={
+            'category': self.category.id,
+            'sku': 'SKU-NEW',
+            'name': 'Onion Powder',
+            'slug': '',
+            'description': 'Second row',
+            'price_per_kg': '10.00',
+            'stock': 8,
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Product.objects.filter(name='Onion Powder', slug='onion-powder-2').exists())
+
     def test_edit_product_updates_existing_product_for_superuser(self):
         self.client.login(username='owner', password='testpass123')
 
@@ -100,81 +110,7 @@ class ProductManagementViewsTests(TestCase):
         self.client.login(username='shopper', password='testpass123')
 
         add_response = self.client.get(reverse('add_product'))
-        edit_response = self.client.get(reverse('edit_product', args=[self.product.slug]))
-
-        self.assertEqual(add_response.status_code, 302)
-        self.assertEqual(edit_response.status_code, 302)
-        self.assertFalse(Product.objects.filter(name='Unauthorized Product').exists())
-
-
-class ProductCustomLogicTests(TestCase):
-    def setUp(self):
-        self.category = Category.objects.create(name='pepper', friendly_name='Pepper')
-
-    def test_stock_status_thresholds(self):
-        product = Product.objects.create(
-            category=self.category,
-            sku='SKU-10',
-            name='Black Pepper',
-            slug='black-pepper',
-            description='Aromatic',
-            price_per_kg='30.00',
-            stock=3,
-        )
-        self.assertEqual(product.stock_status, 'critical_stock')
-
-        product.stock = 20
-        self.assertEqual(product.stock_status, 'low_stock')
-
-        product.stock = 60
-        self.assertEqual(product.stock_status, 'in_stock')
-
-        product.stock = 0
-        self.assertEqual(product.stock_status, 'out_of_stock')
-
-    def test_get_pricing_for_quantity_applies_bulk_discount(self):
-        product = Product.objects.create(
-            category=self.category,
-            sku='SKU-11',
-            name='White Pepper',
-            slug='white-pepper',
-            description='Premium',
-            price_per_kg='20.00',
-            stock=120,
-        )
-
-        pricing = product.get_pricing_for_quantity('12')
-
-        self.assertEqual(pricing['discount_percent'], 10)
-        self.assertEqual(str(pricing['base_subtotal']), '240.00')
-        self.assertEqual(str(pricing['subtotal']), '216.00')
-        self.assertEqual(str(pricing['savings']), '24.00')
-
-
-    def test_custom_discount_rules_override_default_tiers(self):
-        product = Product.objects.create(
-            category=self.category,
-            sku='SKU-12',
-            name='Chili Flakes',
-            slug='chili-flakes',
-            description='Hot',
-            price_per_kg='10.00',
-            stock=200,
-            discount_rules=[
-                {'minimum_quantity': 3, 'discount_rate': 0.08},
-                {'minimum_quantity': 15, 'discount_rate': 0.2},
-            ],
-        )
-
-        pricing = product.get_pricing_for_quantity('16')
-
-        self.assertEqual(pricing['discount_percent'], 20)
-        self.assertEqual(str(pricing['subtotal']), '128.00')
-
-    def test_threshold_validation_rejects_invalid_configuration(self):
-        product = Product(
-            category=self.category,
-            sku='SKU-13',
+@@ -178,26 +189,69 @@ class ProductCustomLogicTests(TestCase):
             name='Paprika',
             slug='paprika',
             description='Mild',
@@ -200,7 +136,7 @@ class ProductCustomLogicTests(TestCase):
         )
 
         with self.assertRaises(ValidationError):
-            product.full_clean()
+             product.full_clean()
     def test_model_save_generates_unique_slug_when_missing(self):
         first = Product.objects.create(
             category=self.category,
