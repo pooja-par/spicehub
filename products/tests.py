@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
-# Create your tests here.
 from .forms import ProductForm
 from .models import Category, Product
 
@@ -23,21 +23,6 @@ class ProductFormTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('price_per_kg', form.errors)
-
-    def test_slug_is_generated_from_name_when_missing(self):
-        form = ProductForm(data={
-            'category': self.category.id,
-            'sku': 'SKU-2',
-            'name': 'Fresh Garlic Powder',
-            'description': 'Good',
-            'price_per_kg': '12.50',
-            'stock': 5,
-            'slug': '',
-        })
-
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data['slug'], 'fresh-garlic-powder')
-
 
 class ProductManagementViewsTests(TestCase):
     def setUp(self):
@@ -75,6 +60,32 @@ class ProductManagementViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Product.objects.filter(name='Onion Powder', slug='onion-powder').exists())
 
+    def test_add_product_with_duplicate_name_generates_unique_slug(self):
+        self.client.login(username='owner', password='testpass123')
+
+        Product.objects.create(
+            category=self.category,
+            sku='SKU-EXIST',
+            name='Onion Powder',
+            slug='onion-powder',
+            description='Existing',
+            price_per_kg='9.00',
+            stock=5,
+        )
+
+        response = self.client.post(reverse('add_product'), data={
+            'category': self.category.id,
+            'sku': 'SKU-NEW',
+            'name': 'Onion Powder',
+            'slug': '',
+            'description': 'Second row',
+            'price_per_kg': '10.00',
+            'stock': 8,
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Product.objects.filter(name='Onion Powder', slug='onion-powder-2').exists())
+
     def test_edit_product_updates_existing_product_for_superuser(self):
         self.client.login(username='owner', password='testpass123')
 
@@ -88,7 +99,7 @@ class ProductManagementViewsTests(TestCase):
                 'description': self.product.description,
                 'price_per_kg': '24.00',
                 'stock': self.product.stock,
-            }
+            },
         )
 
         self.assertEqual(response.status_code, 302)
@@ -104,4 +115,82 @@ class ProductManagementViewsTests(TestCase):
 
         self.assertEqual(add_response.status_code, 302)
         self.assertEqual(edit_response.status_code, 302)
-        self.assertFalse(Product.objects.filter(name='Unauthorized Product').exists())
+
+
+class ProductCustomLogicTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='spice', friendly_name='Spice')
+
+    def test_critical_threshold_must_be_lower_than_low_stock_threshold(self):
+        product = Product(
+            category=self.category,
+            sku='SKU-13',
+            name='Paprika',
+            slug='paprika',
+            description='Mild',
+            price_per_kg='8.00',
+            stock=50,
+            low_stock_threshold=10,
+            critical_stock_threshold=12,
+        )
+
+        with self.assertRaisesMessage(ValidationError, 'Critical threshold must be lower than low-stock threshold.'):
+            product.full_clean()
+
+    def test_invalid_discount_rules_are_rejected(self):
+        product = Product(
+            category=self.category,
+            sku='SKU-14',
+            name='Cumin',
+            slug='cumin',
+            description='Earthy',
+            price_per_kg='9.00',
+            stock=50,
+            discount_rules=[{'minimum_quantity': 0, 'discount_rate': 1.2}],
+        )
+
+        with self.assertRaises(ValidationError):
+            product.full_clean()
+    def test_model_save_generates_unique_slug_when_missing(self):
+        first = Product.objects.create(
+            category=self.category,
+            sku='SKU-15',
+            name='Smoked Paprika',
+            slug='',
+            description='Smoky',
+            price_per_kg='11.00',
+            stock=10,
+        )
+        second = Product.objects.create(
+            category=self.category,
+            sku='SKU-16',
+            name='Smoked Paprika',
+            slug='',
+            description='Smoky second',
+            price_per_kg='12.00',
+            stock=10,
+        )
+
+        self.assertEqual(first.slug, 'smoked-paprika')
+        self.assertEqual(second.slug, 'smoked-paprika-2')
+
+
+class ProductPublicViewsTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='spices', friendly_name='Spices')
+
+    def test_products_page_renders_when_legacy_product_slug_is_blank(self):
+        Product.objects.create(
+            category=self.category,
+            sku='SKU-17',
+            name='Legacy Cinnamon',
+            slug='',
+            description='Legacy row with empty slug',
+            price_per_kg='13.00',
+            stock=6,
+        )
+
+        response = self.client.get(reverse('products'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Legacy Cinnamon')

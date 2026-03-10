@@ -153,7 +153,7 @@ Checkout flow:
 1. Create and activate a virtual environment:
    ```bash
    python3 -m venv venv
-   source venv/bin/activate
+   source venv/bin/activate 
    ```
 2. Install dependencies:
    ```bash
@@ -170,6 +170,7 @@ Checkout flow:
    ```
 4. Apply database migrations:
    ```bash
+   python manage.py makemigrations
    python manage.py migrate
    ```
 5. Start the development server:
@@ -192,7 +193,15 @@ Steps for deployment:
 
 3. Create a new Render app and link it to the repository.
 4. Configure the app settings and environment variables.
-5. Deploy the application using Render’s deployment options.
+5. Set the Render build command:
+   ```bash
+   pip install -r requirements.txt && python manage.py collectstatic --noinput
+   ```
+6. Set the Render start command:
+   ```bash
+   gunicorn --bind 0.0.0.0:$PORT spicehub.wsgi:application
+   ```
+7. Deploy the application using Render’s deployment options.
 
 - Deployed website on Render is: https://spicehub.onrender.com/
 

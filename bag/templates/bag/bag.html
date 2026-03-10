@@ -31,6 +31,7 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price</th>
                                     <th scope="col">Subtotal</th>
+                                    <th scope="col">Savings</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -40,7 +41,16 @@
                                     <td>{{ item.product.name }}</td>
                                     <td>{{ item.quantity }}</td>
                                     <td>${{ item.product.price_per_kg }}</td>
-                                    <td>${{ item.subtotal }}</td>
+                                    <td>
+                                        {% if item.discount_percent > 0 %}
+                                            <span class="text-muted"><s>${{ item.base_subtotal }}</s></span><br>
+                                            <span class="text-success">${{ item.subtotal }}</span>
+                                            <small class="d-block text-success">{{ item.discount_percent }}% bulk discount</small>
+                                        {% else %}
+                                            ${{ item.subtotal }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-success">${{ item.savings }}</td>
                                     <td>
                                         <a href="{% url 'remove_from_bag' item.product.id %}" class="btn btn-outline-danger btn-sm">
                                             Remove
