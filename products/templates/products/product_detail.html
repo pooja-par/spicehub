@@ -23,7 +23,7 @@
                              <img class="card-img-top img-fluid rounded shadow-sm" src="{{ product.image.url }}" alt="{{ product.name }}">
                          </a>
                      {% else %}
-                         <img class="card-img-top img-fluid rounded shadow-sm" src="{{ MEDIA_URL }}noimage.png" alt="{{ product.name }}">
+                         <img class="card-img-top img-fluid rounded shadow-sm" src="{% static 'images/noimage.png' %}" alt="{{ product.name }}">
                      {% endif %}
                  </div>
              </div>

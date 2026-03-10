@@ -201,3 +201,46 @@ class ProductCustomLogicTests(TestCase):
 
         with self.assertRaises(ValidationError):
             product.full_clean()
+    def test_model_save_generates_unique_slug_when_missing(self):
+        first = Product.objects.create(
+            category=self.category,
+            sku='SKU-15',
+            name='Smoked Paprika',
+            slug='',
+            description='Smoky',
+            price_per_kg='11.00',
+            stock=10,
+        )
+        second = Product.objects.create(
+            category=self.category,
+            sku='SKU-16',
+            name='Smoked Paprika',
+            slug='',
+            description='Smoky second',
+            price_per_kg='12.00',
+            stock=10,
+        )
+
+        self.assertEqual(first.slug, 'smoked-paprika')
+        self.assertEqual(second.slug, 'smoked-paprika-2')
+
+
+class ProductPublicViewsTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='spices', friendly_name='Spices')
+
+    def test_products_page_renders_when_legacy_product_slug_is_blank(self):
+        Product.objects.create(
+            category=self.category,
+            sku='SKU-17',
+            name='Legacy Cinnamon',
+            slug='',
+            description='Legacy row with empty slug',
+            price_per_kg='13.00',
+            stock=6,
+        )
+
+        response = self.client.get(reverse('products'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Legacy Cinnamon')

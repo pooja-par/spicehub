@@ -2,6 +2,7 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -64,6 +65,20 @@ class Product(models.Model):
                 'critical_stock_threshold': 'Critical threshold must be lower than low-stock threshold.'
             })
         self._normalized_discount_rules()
+
+
+    def save(self, *args, **kwargs):
+        """Ensure each product has a slug, even for legacy/imported rows."""
+        if not self.slug and self.name:
+            base_slug = slugify(self.name) or "product"
+            slug_candidate = base_slug
+            suffix = 2
+            while Product.objects.exclude(pk=self.pk).filter(slug=slug_candidate).exists():
+                slug_candidate = f"{base_slug}-{suffix}"
+                suffix += 1
+            self.slug = slug_candidate
+        super().save(*args, **kwargs)
+
 
     @property
     def stock_status(self):
