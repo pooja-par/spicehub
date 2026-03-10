@@ -1,0 +1,132 @@
+[33m64fef76c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Updating view of product and details
+[33md29e15e2[m Updating view of product and details
+[33m779fbd3c[m Updating view of product and details
+[33m8b29129d[m Updating view of product and details
+[33me1ffe28b[m Updating view of product and details
+[33m70099ec2[m Updating view of product and details
+[33m26a48d31[m Updating view of product and details
+[33mcef7a6cd[m error corrections
+[33m604f3cf0[m error corrections
+[33mc9365e49[m same commit with minor corrections
+[33m74870c36[m error correction
+[33mdefb5bad[m Enhance products app with model-driven pricing rules, superuser product management, and migrations
+[33m1b7a766a[m user facing form with the validation is added
+[33m96fa37b5[m Change of the Settings.py code to introduce products and features properly
+[33m64bbc9f8[m Change of the Settings.py code to introduce products and features properly
+[33m7c6561b7[m Change of the Settings.py code to introduce products and features properly
+[33m8c54cecd[m deployed website is added
+[33m523e529b[m Updated Readme file
+[33m8c65b481[m product can be selected from the cloudinary
+[33m3fa5840e[m Admin can import files from Claudinary
+[33m69c252a0[m Super user and data loading related problem solving
+[33m4b440321[m Super user and data loading related problem solving
+[33m1a5cb95a[m Super user and data loading related problem solving
+[33mfb2318b7[m Super user and data loading related problem solving
+[33m5687ea39[m settings updated for the render
+[33m6f11371f[m cloudinary set up done
+[33m2c97af5d[m Settings updated for the cloudinary
+[33m5976da39[m settings for the render
+[33mbbba9f7c[m settings for the render
+[33m6f536c24[m media files as a static files
+[33ma626401d[m nothing special, just trial
+[33me5f26141[m nothing special, just trial
+[33m9adaa965[m nothing special, just trial
+[33m9f2eca87[m nothing special, just trial
+[33m17a1f05a[m import env removed from the setting file
+[33m0676835e[m requirements updated and .python-version instead of runtime added
+[33m236dc41c[m settings related to security updated
+[33mac6fa00d[m settings related to security updated
+[33m098dd13a[m settings related to security updated
+[33m2d4c50e6[m Fix deps: modern requests/urllib3; crispy-forms 2.x; drop psycopg2 source
+[33m18666a25[m some security changes in the settings
+[33m55e0c95d[m some security changes in the settings
+[33m806218e0[m setting file update
+[33m87e19e14[m Use Cloudinary for MEDIA files; ensure Whitenoise order
+[33m2fcf1620[m Add Cloudinary media storage
+[33md528592c[m Detail check for error
+[33me4af7a7b[m For the Check
+[33mab8e3d7c[m social media page is added in Readme
+[33mabdd58d2[m social media page is added in Readme
+[33mca8b71c9[m social media page is added
+[33m60e3e04e[m Readme file updated with the pictures and new content
+[33m9a72892b[m Readme file updated with the pictures and new content
+[33me78fe1c8[m pictures for the readme file added
+[33mc4dd45fd[m pictures for the readme file added
+[33m9dc00aca[m Correct inputs are set in setting file
+[33m01e7dfdb[m Correct inputs are set in setting file
+[33m5ad09f9a[m Correct inputs are set in setting file
+[33m035232da[m uniform button formating applied
+[33m784d4100[m Update .gitpod.yml
+[33mf295c54c[m .gitpod.yml is updated
+[33m6934e99c[m Change in the fonts and button styles
+[33m8c18cb07[m Formating changed for the product page and home page
+[33ma24cf85f[m Formating of the home page is changed
+[33m04315e7d[m Formating of the home page is changed
+[33mbe05cb7b[m minor changes with the pictures and other formating
+[33ma4ea13da[m Format change for the main page
+[33m10c9b7fb[m alignment adjustment of body
+[33m243a1d64[m updating the formating of main page
+[33m455ae3c4[m updating the formating of main page
+[33m881fbe4e[m updating the formating of main page
+[33m8c1afea0[m security apply in settings file
+[33m842e7763[m security apply in settings file
+[33m840ee7b5[m Some minor updates relating to graphics are made
+[33m3c7e52b9[m contact form model implemented
+[33m182a157e[m Header updated with better look and some additional options
+[33m790d5621[m SEO files are added
+[33mc7a1e9b9[m Basic set up for SEO
+[33m368f0ce5[m creation of readme file
+[33m1b7e116f[m some final touch ups
+[33mb770959d[m updating setting.py
+[33mc69092e8[m updated virsion
+[33m62198a88[m Profile app is created
+[33mbd961e2c[m Profile detail form is generated
+[33m868a39d7[m Profile app started and model created
+[33m45b9cf82[m Static files implementation
+[33m9e09b40a[m Static files implementation
+[33mb19cdca8[m Static files implementation
+[33m1e3092d3[m removed secret key from github
+[33mfe0d074e[m heroku diployment setting - Bug3
+[33m0e8fbda2[m heroku diployment setting - Bug2
+[33me7a1b91f[m heroku diployment setting - Bug
+[33m610ee39e[m heroku diployment setting done
+[33m35d55e4b[m updated code with settings
+[33mdcd1d1cf[m updating some template files
+[33md371542b[m Product management
+[33m0ba6958c[m admin product panal
+[33me2ecd80c[m User Profile is created and Home page updated
+[33med03155f[m Profile added
+[33m203e5d90[m login logout error solved
+[33mba886a68[m accounts created
+[33m6ac7dd60[m Check out experience improved
+[33m9df169ea[m Stripe payment method is implemented
+[33m393614d2[m form for the check out and input for credit card created
+[33m4d9232ca[m View of Checkout form
+[33mc49ecde9[m Checkout app and form crewation
+[33mc66af5a7[m Check out app created
+[33mb562897f[m created checkout app and model
+[33mfe6ddf8a[m Success message using toast is added
+[33m3db6c423[m Product section is now upto date
+[33mf387c176[m unknown commit message
+[33m9e3420a1[m update of product detail file
+[33m1d73d00f[m added bag context and delivery logic
+[33mf0b86d0c[m added shopping bag app, url and template
+[33mb4918b63[m Update of product functionality and searchbar
+[33m4737f384[m added detailed functionality
+[33md6543833[m added product html file
+[33m6f2ebd26[m added product model and product details
+[33mef552078[m added product model and product details
+[33m958105bf[m Added views for product listing, product details, and cart management.
+[33m766c4ed4[m Added management command to load data from JSON file.
+[33m02737cb2[m Added CartItem and Order models for cart and checkout functionalities
+[33m47ea5132[m added model from category and products
+[33m75a055e4[m creating homepage with navigation bar
+[33md7c20270[m complete homepage header and css
+[33me59ec883[m added home page content
+[33m59e2d082[m added home page content
+[33m40db5f72[m setup home app and templates
+[33m7499a4c5[m setup allauth templates
+[33maada1e0c[m setup allauth templates
+[33m73d922de[m setup allauth
+[33m6b6cc490[m initial commit
+[33mf39151e4[m Initial commit
