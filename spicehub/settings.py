@@ -26,13 +26,25 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-ALLOWED_HOSTS = [
+_default_allowed_hosts = [
     '8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
     "spicehub.onrender.com",
     'localhost',
     '127.0.0.1'
 ]
+
+# Optional env override (comma-separated). Handles accidental http(s) prefixes.
+raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
+if raw_allowed_hosts:
+    parsed_hosts = []
+    for host in raw_allowed_hosts.split(','):
+        cleaned = host.strip().replace('https://', '').replace('http://', '').strip('/')
+        if cleaned:
+            parsed_hosts.append(cleaned)
+    ALLOWED_HOSTS = parsed_hosts
+else:
+    ALLOWED_HOSTS = _default_allowed_hosts
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
@@ -130,32 +142,22 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
 
 
-# Database
-# Use the Render environment variable to determine the database path
-if os.environ.get("CLOUDINARY_URL"):
-    # If deployed (CLOUDINARY_URL is set as an env var), use the persistent disk path
-    DATABASE_PATH = "/var/data/db.sqlite3"
+# Database priority:
+# 1) DATABASE_URL if provided (recommended on Render)
+# 2) SQLite at /var/data when the persistent disk mount exists
+# 3) Local SQLite in the project root
+render_sqlite_path = Path('/var/data/db.sqlite3')
+if render_sqlite_path.parent.exists():
+    default_db_url = f"sqlite:///{render_sqlite_path}"
 else:
-    # If running locally, use the default project root path
-    DATABASE_PATH = BASE_DIR / 'db.sqlite3'
-
+    default_db_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
 
 DATABASES = {
     "default": dj_database_url.config(
-        # Force the database configuration to point to the determined SQLite path
-        default=f"sqlite:///{DATABASE_PATH}",
+        default=default_db_url,
         conn_max_age=600,
     )
 }
-'''
-
-# Database
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}'''
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -183,7 +185,13 @@ CONTACT_EMAIL = 'info@spicehub.com'
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Use non-manifest static storage by default to avoid hard 500s when a platform
+# starts the app before/without running collectstatic.
+USE_MANIFEST_STATIC_FILES = os.getenv("USE_MANIFEST_STATIC_FILES", "False").lower() == "true"
+if USE_MANIFEST_STATIC_FILES:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Media files
 MEDIA_URL = '/media/'
@@ -198,7 +206,9 @@ else:
 
 # Security
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = not DEBUG
+# Default to no forced HTTPS redirect unless explicitly enabled by environment.
+# This avoids platform HTTP health checks being redirected and marked unhealthy.
+SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
