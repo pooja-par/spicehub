@@ -151,7 +151,6 @@ class ProductCustomLogicTests(TestCase):
 
         with self.assertRaises(ValidationError):
             product.full_clean()
-            product.full_clean()
     def test_model_save_generates_unique_slug_when_missing(self):
         first = Product.objects.create(
             category=self.category,
