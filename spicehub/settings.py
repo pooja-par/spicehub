@@ -11,56 +11,59 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables
+# Load environment variables for local development (if present)
 if os.path.isfile('env.py'):
-    import env
+    import env  # noqa: F401
+
+
+def env_bool(name, default=False):
+    """Parse boolean environment variables safely."""
+    return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
+
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY is missing — set it in environment variables")
 
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = env_bool("DEBUG", False)
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+import cloudinary  # noqa: E402,F401
+import cloudinary.uploader  # noqa: E402,F401
+import cloudinary.api  # noqa: E402,F401
 
 _default_allowed_hosts = [
     '8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
     'spicehub-4df0a1a6c581.herokuapp.com',
-    "spicehub.onrender.com",
+    'spicehub.onrender.com',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
 ]
 
 # Optional env override (comma-separated). Handles accidental http(s) prefixes.
 raw_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
-if raw_allowed_hosts:
+if raw_allowed_hosts.strip():
     parsed_hosts = []
     for host in raw_allowed_hosts.split(','):
         cleaned = host.strip().replace('https://', '').replace('http://', '').strip('/')
         if cleaned:
             parsed_hosts.append(cleaned)
-    ALLOWED_HOSTS = parsed_hosts
+    ALLOWED_HOSTS = parsed_hosts or _default_allowed_hosts
 else:
     ALLOWED_HOSTS = _default_allowed_hosts
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-poojapar-spicehub-1xer9h37ya8.ws-eu121.gitpod.io',
     'https://spicehub-4df0a1a6c581.herokuapp.com',
-    "https://spicehub.onrender.com",
-    "https://127.0.0.1:8000"
+    'https://spicehub.onrender.com',
+    'https://127.0.0.1:8000',
 ]
 
-# Add local dev origins if running locally
-"""
-if DEBUG:
-    CSRF_TRUSTED_ORIGINS += [
-        "http://127.0.0.1:8000",
-        "http://localhost:8000",
-    ]
-"""
+# Allow comma-separated override when needed (e.g., custom domain)
+raw_csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if raw_csrf_origins.strip():
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in raw_csrf_origins.split(',') if o.strip()]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,12 +73,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    
+
     # Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    
+
     # Local apps
     'home',
     'products',
@@ -90,7 +93,7 @@ INSTALLED_APPS = [
 ]
 
 # Cloudinary apps (conditionally added later)
-if os.environ.get("CLOUDINARY_URL"):
+if os.getenv("CLOUDINARY_URL"):
     INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
 
 SITE_ID = 1
@@ -120,7 +123,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # required by allauth
+                'django.template.context_processors.request',  # required by allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
@@ -130,7 +133,7 @@ TEMPLATES = [
             'builtins': [
                 'crispy_forms.templatetags.crispy_forms_tags',
                 'crispy_forms.templatetags.crispy_forms_field',
-            ]
+            ],
         },
     },
 ]
@@ -140,7 +143,6 @@ WSGI_APPLICATION = 'spicehub.wsgi.application'
 # Crispy Forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
-
 
 # Database priority:
 # 1) DATABASE_URL if provided (recommended on Render)
@@ -153,13 +155,13 @@ else:
     default_db_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
 
 DATABASES = {
-    "default": dj_database_url.config(
+    'default': dj_database_url.config(
         default=default_db_url,
         conn_max_age=600,
     )
 }
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication / Allauth
 AUTHENTICATION_BACKENDS = (
@@ -167,14 +169,14 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = ""  # "mandatory" / "optional" if you want email verify
+ACCOUNT_EMAIL_VERIFICATION = ''  # "mandatory" / "optional" if you want email verify
 ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
-LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Email (dev defaults)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -182,41 +184,41 @@ DEFAULT_FROM_EMAIL = 'info@spicehub.com'
 CONTACT_EMAIL = 'info@spicehub.com'
 
 # Static files (WhiteNoise)
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Use non-manifest static storage by default to avoid hard 500s when a platform
 # starts the app before/without running collectstatic.
-USE_MANIFEST_STATIC_FILES = os.getenv("USE_MANIFEST_STATIC_FILES", "False").lower() == "true"
+USE_MANIFEST_STATIC_FILES = env_bool('USE_MANIFEST_STATIC_FILES', False)
 if USE_MANIFEST_STATIC_FILES:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary configuration
-if os.environ.get("CLOUDINARY_URL"):
-    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-    CLOUDINARY_STORAGE = {"SECURE": True}
+if os.getenv("CLOUDINARY_URL"):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {'SECURE': True}
 else:
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Security
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Default to no forced HTTPS redirect unless explicitly enabled by environment.
 # This avoids platform HTTP health checks being redirected and marked unhealthy.
-SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
+SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', False)
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
 # Stripe
-STRIPE_CURRENCY = "usd"
-STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY", "")
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
-STRIPE_WH_SECRET = os.getenv("STRIPE_WH_SECRET", "")
+STRIPE_CURRENCY = 'usd'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')
 
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
