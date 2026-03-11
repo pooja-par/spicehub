@@ -1,133 +1,123 @@
-from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
-from django.db.utils import OperationalError, ProgrammingError
 from django.db.models.functions import Lower
+from django.db.utils import OperationalError, ProgrammingError
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 
-from .models import Product, Category
 from .forms import ProductForm
+from .models import Category, Product
 
 
-def all_products(request):
-    """ A view to show all products, including sorting and search queries """
-
-    products = Product.objects.all()
+def _apply_product_filters(request, products):
+    """Apply sorting, category, and search filters from query params."""
     query = None
-    categories = None
+    selected_categories = []
     sort = None
     direction = None
 
-    from django.shortcuts import render, redirect, reverse, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
-from django.db.models import Q
-from django.db.utils import OperationalError, ProgrammingError
-from django.db.models.functions import Lower
+    if 'sort' in request.GET:
+        sortkey = request.GET['sort']
+        sort = sortkey
 
-from .models import Product, Category
-from .forms import ProductForm
+        if sortkey == 'name':
+            products = products.annotate(lower_name=Lower('name'))
+            sortkey = 'lower_name'
+        elif sortkey == 'category':
+            sortkey = 'category__name'
+
+        direction = request.GET.get('direction')
+        if direction == 'desc':
+            sortkey = f'-{sortkey}'
+
+        products = products.order_by(sortkey)
+
+    if 'category' in request.GET and request.GET['category'].strip():
+        selected_categories = [c for c in request.GET['category'].split(',') if c]
+        products = products.filter(category__name__in=selected_categories)
+
+    if 'q' in request.GET:
+        query = request.GET['q'].strip()
+        if not query:
+            return products.none(), None, selected_categories, sort, direction, True
+
+        queries = Q(name__icontains=query) | Q(description__icontains=query)
+        products = products.filter(queries)
+
+    return products, query, selected_categories, sort, direction, False
+
+
+def _build_related_products(product):
+    """Return up to four in-stock products from the same category."""
+    if not product.category:
+        return []
+
+    related_queryset = Product.objects.filter(category=product.category).exclude(pk=product.pk)
+    related_products = [p for p in related_queryset if p.stock_status != 'out_of_stock']
+
+    related_products.sort(
+        key=lambda candidate: (
+            abs(candidate.price_per_kg - product.price_per_kg),
+            candidate.name.lower(),
+        )
+    )
+    return related_products[:4]
 
 
 def all_products(request):
-    """ A view to show all products, including sorting and search queries """
-
+    """Show all products, including sorting and search queries."""
     products = Product.objects.all()
     query = None
-    categories = None
+    selected_categories = []
     sort = None
     direction = None
+    all_categories = []
 
-    if request.GET:
-        if 'sort' in request.GET:
-            sortkey = request.GET['sort']
-            sort = sortkey
-            if sortkey == 'name':
-                sortkey = 'lower_name'
-                products = products.annotate(lower_name=Lower('name'))
-            if sortkey == 'category':
-                sortkey = 'category__name'
-            if 'direction' in request.GET:
-                direction = request.GET['direction']
-                if direction == 'desc':
-                    sortkey = f'-{sortkey}'
-            products = products.order_by(sortkey)
-            
-        if 'category' in request.GET:
-            categories = request.GET['category'].split(',')
-            products = products.filter(category__name__in=categories)
-            categories = Category.objects.filter(name__in=categories)
-
-        if 'q' in request.GET:
-            query = request.GET['q']
-            if not query:
-                messages.error(request, "You didn't enter any search criteria!")
-                return redirect(reverse('products'))
-            
-            queries = Q(name__icontains=query) | Q(description__icontains=query)
-            products = products.filter(queries)
     try:
-        if request.GET:
-            if 'sort' in request.GET:
-                sortkey = request.GET['sort']
-                sort = sortkey
-                if sortkey == 'name':
-                    sortkey = 'lower_name'
-                    products = products.annotate(lower_name=Lower('name'))
-                if sortkey == 'category':
-                    sortkey = 'category__name'
-                if 'direction' in request.GET:
-                    direction = request.GET['direction']
-                    if direction == 'desc':
-                        sortkey = f'-{sortkey}'
-                products = products.order_by(sortkey)
+        (
+            products,
+            query,
+            selected_categories,
+            sort,
+            direction,
+            invalid_search,
+        ) = _apply_product_filters(request, products)
 
-            if 'category' in request.GET:
-                categories = request.GET['category'].split(',')
-                products = products.filter(category__name__in=categories)
-                categories = Category.objects.filter(name__in=categories)
+        if invalid_search:
+            messages.error(request, "You didn't enter any search criteria!")
+            return redirect(reverse('products'))
 
-            if 'q' in request.GET:
-                query = request.GET['q']
-                if not query:
-                    messages.error(request, "You didn't enter any search criteria!")
-                    return redirect(reverse('products'))
-
-                queries = Q(name__icontains=query) | Q(description__icontains=query)
-                products = products.filter(queries)
-
-        # Force DB evaluation here so migration/table issues are caught and
-        # handled instead of raising a 500 while rendering templates.
+        all_categories = list(Category.objects.filter(is_active=True).order_by('friendly_name', 'name'))
         products = list(products)
-        if categories is not None:
-            categories = list(categories)
     except (OperationalError, ProgrammingError):
-        products = []
-        categories = []
         messages.warning(
             request,
             'Products are temporarily unavailable while the database is initializing. '
             'Please refresh in a moment.',
         )
-
-    current_sorting = f'{sort}_{direction}'
+        products = []
+        all_categories = []
+        query = None
+        selected_categories = []
+        sort = None
+        direction = None
 
     context = {
         'products': products,
         'search_term': query,
-        'current_categories': categories,
-        'current_sorting': current_sorting,
+        'categories': all_categories,
+        'current_categories': selected_categories,
+        'current_sorting': f'{sort}_{direction}',
     }
-
     return render(request, 'products/products.html', context)
 
 
 def product_detail(request, product_slug):
-    """A view to show individual product details"""
+    """Show an individual product detail page."""
     try:
         product = get_object_or_404(Product, slug=product_slug)
+        related_products = _build_related_products(product)
     except (OperationalError, ProgrammingError):
         messages.warning(
             request,
@@ -136,8 +126,12 @@ def product_detail(request, product_slug):
         )
         return redirect(reverse('products'))
 
-    context = {'product': product}
-    return render(request, 'products/product_detail.html', context)
+    return render(
+        request,
+        'products/product_detail.html',
+        {'product': product, 'related_products': related_products},
+    )
+
 
 def _require_superuser(request):
     """Only superusers can access product management forms."""
@@ -149,7 +143,7 @@ def _require_superuser(request):
 
 @login_required
 def add_product(request):
-    """ Add a product to the store """
+    """Add a product to the store."""
     if not _require_superuser(request):
         return redirect(reverse('home'))
 
@@ -201,9 +195,21 @@ def edit_product(request, product_slug):
         form = ProductForm(instance=product)
         messages.info(request, f'You are editing {product.name}.')
 
-    context = {
-        'form': form,
-        'product': product,
-    }
+    return render(request, 'products/edit_product.html', {'form': form, 'product': product})
 
-    return render(request, 'products/edit_product.html', context)
+
+@login_required
+def delete_product(request, product_slug):
+    """Delete an existing product."""
+    if not _require_superuser(request):
+        return redirect(reverse('home'))
+
+    product = get_object_or_404(Product, slug=product_slug)
+
+    if request.method == 'POST':
+        product_name = product.name
+        product.delete()
+        messages.success(request, f'Successfully deleted {product_name}.')
+        return redirect(reverse('products'))
+
+    return render(request, 'products/delete_product.html', {'product': product})
