@@ -2,10 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from django.db.utils import OperationalError, ProgrammingError
- 
 from .models import Product, Category
- 
- 
+
 class ProductForm(forms.ModelForm):
 
     class Meta:

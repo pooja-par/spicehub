@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class CloudinaryImageSelectWidget(forms.Select):
     """Widget that displays Cloudinary images with preview"""
-    
+
     def __init__(self, attrs=None):
         #choices = self.get_cloudinary_images()
         #super().__init__(attrs=attrs, choices=choices)

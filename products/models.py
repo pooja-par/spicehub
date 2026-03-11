@@ -102,8 +102,16 @@ class Product(models.Model):
                     'discount_rules': f'Rule #{index + 1} must include minimum_quantity and discount_rate.'
                 })
 
-            minimum_quantity = Decimal(str(rule['minimum_quantity']))
-            discount_rate = Decimal(str(rule['discount_rate']))
+            #minimum_quantity = Decimal(str(rule['minimum_quantity']))
+            #discount_rate = Decimal(str(rule['discount_rate']))
+
+            try:
+                minimum_quantity = Decimal(str(rule['minimum_quantity']))
+                discount_rate = Decimal(str(rule['discount_rate']))
+            except (InvalidOperation, TypeError, ValueError):
+                raise ValidationError({
+                    'discount_rules': f'Rule #{index + 1} contains non-numeric values.'
+                })
 
             if minimum_quantity <= 0:
                 raise ValidationError({'discount_rules': 'minimum_quantity must be greater than 0.'})
