@@ -96,8 +96,12 @@
                                 {% if product.stock_status == 'out_of_stock' %}disabled{% endif %}>
 
                             {% if request.user.is_superuser %}
-                                <a href="{% url 'edit_product' product.slug %}" class="btn btn-black rounded-0 text-uppercase ml-2">Edit Product</a>
-                                <a href="{% url 'delete_product' product.slug %}" class="btn btn-danger rounded-0 text-uppercase ml-2">Delete Product</a>
+                                <a href="{% url 'edit_product' product.slug %}" class="btn btn-outline-dark rounded-0 text-uppercase ml-2 mt-2 mt-sm-0">
+                                    <i class="fas fa-edit mr-1"></i>Edit Product
+                                </a>
+                                <a href="{% url 'delete_product' product.slug %}" class="btn btn-outline-danger rounded-0 text-uppercase ml-2 mt-2 mt-sm-0">
+                                    <i class="fas fa-trash-alt mr-1"></i>Delete Product
+                                </a>
                             {% endif %}
                         </div>
                         <input type="hidden" name="redirect_url" value="{{ request.path }}">
