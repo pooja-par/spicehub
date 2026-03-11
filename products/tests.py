@@ -151,6 +151,7 @@ class ProductCustomLogicTests(TestCase):
 
         with self.assertRaises(ValidationError):
             product.full_clean()
+            product.full_clean()
     def test_model_save_generates_unique_slug_when_missing(self):
         first = Product.objects.create(
             category=self.category,
@@ -173,6 +174,36 @@ class ProductCustomLogicTests(TestCase):
 
         self.assertEqual(first.slug, 'smoked-paprika')
         self.assertEqual(second.slug, 'smoked-paprika-2')
+
+
+class ProductAdminTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.superuser = user_model.objects.create_superuser(
+            username='adminowner', email='adminowner@example.com', password='testpass123'
+        )
+        self.category = Category.objects.create(name='paprika', friendly_name='Paprika')
+
+    def test_admin_add_product_works_with_image_value(self):
+        self.client.login(username='adminowner', password='testpass123')
+
+        response = self.client.post('/admin/products/product/add/', data={
+            'category': self.category.id,
+            'sku': 'SKU-ADMIN-1',
+            'name': 'Admin Added Product',
+            'slug': '',
+            'description': 'Added through admin form',
+            'price_per_kg': '15.00',
+            'stock': 12,
+            'image': 'spices/admin-added.jpg',
+            'low_stock_threshold': 25,
+            'critical_stock_threshold': 5,
+            'discount_rules': '[]',
+            '_save': 'Save',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Product.objects.filter(name='Admin Added Product').exists())
 
 
 class ProductPublicViewsTests(TestCase):
