@@ -1,4 +1,4 @@
-## SpiceHub Overview
+## Project 5 - SpiceHub Overview
 
 The SpiceHub Application is a Django-based web application designed for users to browse, select, and purchase spices online. It provides a user-friendly interface for customers to explore products, add them to a shopping cart, and complete a secure checkout. The admin panel includes functionalities to manage products and orders effectively.
 
@@ -6,7 +6,7 @@ The SpiceHub Application is a Django-based web application designed for users to
 ![Responsive Mockup Desktop](https://github.com/pooja-par/spicehub/blob/main/blob/main/static/images/desktopmokup.png)
 ![Responsive Mockup Mobile](https://github.com/pooja-par/spicehub/blob/main/blob/main/static/images/mobilemockup.png)
 
-Author: Pooja Parmar
+Author: Pooja Parmar 
 
 ## Site Goal
 
