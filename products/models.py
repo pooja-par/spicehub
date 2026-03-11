@@ -10,15 +10,21 @@ class Category(models.Model):
 
     name = models.CharField(max_length=254, unique=True)
     friendly_name = models.CharField(max_length=254, null=True, blank=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name_plural = 'Categories'
 
     def __str__(self):
         return self.name
 
     def get_friendly_name(self):
         return self.friendly_name
+    
+    @property
+    def active_product_count(self):
+        return self.products.filter(stock__gt=0).count()
 
 
 class Product(models.Model):
@@ -102,8 +108,6 @@ class Product(models.Model):
                     'discount_rules': f'Rule #{index + 1} must include minimum_quantity and discount_rate.'
                 })
 
-            #minimum_quantity = Decimal(str(rule['minimum_quantity']))
-            #discount_rate = Decimal(str(rule['discount_rate']))
 
             try:
                 minimum_quantity = Decimal(str(rule['minimum_quantity']))
@@ -127,43 +131,30 @@ class Product(models.Model):
         """Expose discount tiers in a template-friendly structure."""
         return [
             {
-                'minimum_quantity': minimum_quantity,
-                'discount_percent': int(discount_rate * 100),
+                'minimum_quantity': int(minimum_quantity),
+                'discount_rate': discount_rate,
+                'discount_percent': int((discount_rate * 100).to_integral_value()),
             }
             for minimum_quantity, discount_rate in self._normalized_discount_rules()
         ]
 
     def get_pricing_for_quantity(self, quantity):
-        """
-        Calculate quantity-aware pricing for bag/checkout use.
-
-        Applies the strongest eligible bulk discount tier and returns a full
-        pricing breakdown so downstream code can present meaningful feedback.
-        """
-        quantity = Decimal(str(quantity or 0))
-        quantity = max(quantity, Decimal('0'))
-
-        discount_rate = Decimal('0')
-        for minimum_quantity, tier_discount in self._normalized_discount_rules():
-            if quantity >= minimum_quantity:
-                discount_rate = tier_discount
+        quantity_decimal = Decimal(str(quantity))
+        selected_discount = Decimal('0')
+        for minimum_quantity, discount_rate in self._normalized_discount_rules():
+            if quantity_decimal >= minimum_quantity:
+                selected_discount = discount_rate
                 break
 
-        unit_price = Decimal(str(self.price_per_kg or 0))
-        base_subtotal = (unit_price * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        discounted_unit_price = (unit_price * (Decimal('1') - discount_rate)).quantize(
-            Decimal('0.01'),
-            rounding=ROUND_HALF_UP,
-        )
-        discounted_subtotal = (discounted_unit_price * quantity).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        savings = (base_subtotal - discounted_subtotal).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        base_total = (self.price_per_kg * quantity_decimal).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        discount_amount = (base_total * selected_discount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        subtotal = (base_total - discount_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         return {
-            'quantity': quantity,
-            'discount_rate': discount_rate,
-            'discount_percent': int(discount_rate * 100),
-            'base_subtotal': base_subtotal,
-            'discounted_unit_price': discounted_unit_price,
-            'subtotal': discounted_subtotal,
-            'savings': savings,
+            'quantity': quantity_decimal,
+            'unit_price': self.price_per_kg,
+            'base_total': base_total,
+            'discount_rate': selected_discount,
+            'discount_amount': discount_amount,
+            'subtotal': subtotal,
         }
