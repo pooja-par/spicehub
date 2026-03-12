@@ -12,7 +12,61 @@ Author: Pooja Parmar
 
 To provide a seamless shopping experience for customers to browse and purchase high-quality spices. The website also allows the admin to manage products and orders efficiently.
 
-## 2.4 Project Rationale, Target Audience, and Security
+## E-commerce Business Model Documentation
+
+SpiceHub operates as a **Business-to-Consumer (B2C) online retail model** focused on direct sales of packaged spices.
+
+### 1) Business model type
+- **Model**: B2C e-commerce store.
+- **Channel**: Direct website sales through product catalogue, bag, and online checkout.
+- **Customer segment**: Home cooks, food enthusiasts, and repeat household buyers.
+
+### 2) Value proposition
+- Curated, quality spice products in one online catalogue.
+- Convenient ordering flow (browse → bag → checkout) without social media message-based ordering.
+- Account/profile support for faster repeat purchases.
+
+### 3) Revenue model
+- **Primary revenue stream**: Product sales margin (selling price minus product sourcing/handling cost).
+- **Secondary revenue support**: Repeat orders enabled through account history and saved profile data.
+
+### 4) Cost structure
+- Product sourcing and inventory cost.
+- Payment processing fees (Stripe transaction charges).
+- Hosting and platform operation costs (Render/cloud services).
+- Marketing/customer retention activity (newsletter and social channels).
+
+### 5) Operational flow
+1. Customer discovers products via catalogue and product detail pages.
+2. Customer adds items to bag and adjusts quantities.
+3. Customer completes checkout via Stripe.
+4. Order and order line items are stored for fulfilment and tracking.
+5. Admin manages catalogue and order handling via Django admin.
+
+### 6) Key business rules implemented in the application
+- Product pricing and quantity-based bag totals drive order value.
+- Secure checkout and order confirmation create trust in transaction completion.
+- Superuser-only product CRUD protects catalogue integrity.
+- Profile/order history improves retention through easier repeat ordering.
+
+### 7) Success metrics (KPIs) for this model
+- Conversion rate: visitors who complete checkout.
+- Average order value.
+- Repeat customer rate.
+- Basket abandonment rate.
+- Newsletter sign-up growth as a retention/remarketing signal.
+
+### 8) Improvements (one by one)
+1. Add discount/coupon strategy to increase conversion.
+2. Introduce shipping-threshold incentives (e.g., free delivery above a spend limit).
+3. Add product bundles (starter kits) to improve average basket size.
+4. Expand lifecycle email automation (welcome, abandoned basket, reorder reminders).
+5. Add analytics dashboard for KPI tracking (conversion, repeat rate, abandonment).
+6. Introduce customer reviews/ratings to strengthen social proof and trust.
+7. Add inventory alerts and low-stock indicators to reduce missed sales.
+
+
+## Project Rationale, Target Audience, and Security
 
 ### Why this application was created
 SpiceHub was created to solve a practical problem for small-to-medium spice retailers: many have product lists on social media but no structured buying journey. The project provides a dedicated e-commerce flow where customers can discover products, compare options, and complete purchases reliably in one place.
@@ -26,9 +80,9 @@ Secondary audience:
 - Store owners/administrators who need low-friction product and order management.
 
 Core user stories implemented in this project:
-- As a shopper, I can browse by category and view product details so I can choose suitable items.
-- As a shopper, I can add/remove/update bag items so I can control my order before payment.
-- As a shopper, I can securely checkout and receive order confirmation so I trust the transaction outcome.
+- As a user, I can browse by category and view product details so I can choose suitable items.
+- As a user, I can add/remove/update bag items so I can control my order before payment.
+- As a user, I can securely checkout and receive order confirmation so I trust the transaction outcome.
 - As a registered user, I can view order history and maintain profile details for future checkouts.
 - As a store owner, I can create/read/update/delete products to keep catalogue data current.
 
@@ -52,7 +106,7 @@ Security decisions were made to reduce common e-commerce risks:
 Together, these decisions align with the project goal of offering a trustworthy and maintainable online store experience.
 
 
-## 2.5 UX Design Process, Artifacts, and Implementation Traceability
+## UX Design Process, Artifacts, and Implementation Traceability
 
 ### Design process followed
 The UX process for SpiceHub followed an iterative path:
