@@ -429,4 +429,47 @@ https://unsplash.com
 https://fontawesome.com
 https://getbootstrap.com
 
+## Newsletter Signup (Assessment 5.2) - Step-by-step terminal commands
 
+Use these commands to implement and run the newsletter signup feature locally.
+
+```bash
+# 1) Move to project root
+cd /workspace/spicehub
+
+# 2) Create app scaffold
+python manage.py startapp newsletter
+
+# 3) Register app in settings
+# - add 'newsletter' to INSTALLED_APPS
+# - add newsletter context processor if rendering form in base template
+
+# 4) Create model/form/view/urls/admin
+# edit:
+# newsletter/models.py
+# newsletter/forms.py
+# newsletter/views.py
+# newsletter/urls.py
+# newsletter/admin.py
+
+# 5) Wire route into project urls
+# edit spicehub/urls.py and include newsletter urls
+
+# 6) Add signup form to footer/global template
+# edit templates/base.html
+
+# 7) Create migrations
+python manage.py makemigrations newsletter
+
+# 8) Apply migrations
+python manage.py migrate
+
+# 9) Run tests for newsletter
+python manage.py test newsletter
+
+# 10) Run full Django system checks
+python manage.py check
+
+# 11) Start development server
+python manage.py runserver 
+```
