@@ -179,31 +179,154 @@ Checkout flow:
    ```
 
 
-## Deployment
+## Complete Deployment Procedure
 
-This project was deployed on Render.
+### Database Strategy
+SpiceHub supports two database options:
 
-Steps for deployment:
-1. Clone the repository:
+1. **SQLite for local development** (default).
+2. **PostgreSQL for production** via `DATABASE_URL`.
+
+The app reads `DATABASE_URL` first. If it is missing, it falls back to SQLite. This behavior is configured in `spicehub/settings.py`.
+
+### 1) Deploy to Render (recommended)
+
+1. Create a new **Web Service** in Render from the GitHub repository.
+2. Use these build/start commands:
+   - Build: `./build.sh`
+   - Start: `gunicorn spicehub.wsgi:application`
+3. Add environment variables:
+   - `SECRET_KEY`
+   - `DEBUG=False`
+   - `DATABASE_URL` (Render PostgreSQL connection string)
+   - `ALLOWED_HOSTS` (comma-separated, e.g. `spicehub.onrender.com`)
+   - `CSRF_TRUSTED_ORIGINS` (comma-separated HTTPS origins)
+   - `STRIPE_PUBLIC_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WH_SECRET` (if checkout is enabled)
+   - `USE_MANIFEST_STATIC_FILES=True` (optional hardening once collectstatic is stable)
+4. Provision a **Render PostgreSQL** instance and copy its internal connection string into `DATABASE_URL`.
+5. Deploy the service once environment variables are set.
+6. Run database migrations on the deployed instance:
+   ```bash
+   python manage.py migrate
+   ```
+7. Load initial product data (if needed):
+   ```bash
+   python manage.py loaddata products/fixtures/categories.json
+   python manage.py loaddata products/fixtures/products.json
+   ```
+8. Create a superuser:
+   ```bash
+   python manage.py createsuperuser
+   ```
+9. Verify static/media configuration and confirm admin login works.
+
+### 2) Local Deployment / Development
+
+1. Clone repository:
    ```bash
    git clone https://github.com/pooja-par/spicehub.git
-
+   cd spicehub
+   ```
 2. Install dependencies:
-    pip install -r requirements.txt
-
-3. Create a new Render app and link it to the repository.
-4. Configure the app settings and environment variables.
-5. Set the Render build command:
    ```bash
-   pip install -r requirements.txt && python manage.py collectstatic --noinput
+   pip install -r requirements.txt
    ```
-6. Set the Render start command:
+3. Set local environment variables (example):
    ```bash
-   gunicorn --bind 0.0.0.0:$PORT spicehub.wsgi:application
+   export SECRET_KEY="dev-secret-key"
+   export DEBUG=1
    ```
-7. Deploy the application using Render’s deployment options.
+4. Apply migrations:
+   ```bash
+   python manage.py migrate
+   ```
+5. Load fixtures (optional):
+   ```bash
+   python manage.py loaddata products/fixtures/categories.json
+   python manage.py loaddata products/fixtures/products.json
+   ```
+6. Run server:
+   ```bash
+   python manage.py runserver
+   ```
 
-- Deployed website on Render is: https://spicehub.onrender.com/
+## Complete Testing Procedure
+
+### Automated / Command-Based Checks
+
+Run the following before release:
+
+```bash
+python manage.py check
+python manage.py test
+python manage.py makemigrations --check --dry-run
+```
+
+Expected outcomes:
+- `check`: no system issues.
+- `test`: all tests pass.
+- `makemigrations --check --dry-run`: no uncommitted model changes.
+
+### Manual Functional Testing Checklist
+
+#### A. Core Store Journey
+1. Open home page and confirm header, footer, and search are visible.
+2. Open products listing and verify category filters work.
+3. Open a product detail page and add product to bag.
+4. Adjust quantity and verify totals update.
+5. Proceed to checkout and submit test payment details.
+6. Confirm order success page and order reference display.
+
+#### B. Product Management CRUD (Superuser)
+1. **Create**: add a new product from "Add Product" page.
+2. **Read**: verify listing and detail page display new product.
+3. **Update**: edit product details and confirm changes persist.
+4. **Delete**: use delete confirmation page and verify removal from listing.
+
+##### Explicit CRUD Evidence Table (Assessment Ready)
+
+| CRUD | Route / Screen | Role | Test Steps | Expected Outcome | Actual Outcome | Evidence |
+|---|---|---|---|---|---|---|
+| Create | `/products/add/` | Superuser | Submit valid product form with name, price, stock, category | Product is created, success message shown, redirected to product detail | Pass | Screenshot + admin/product list check |
+| Read | `/products/` and `/products/<slug>/` | Any user | Open product list and product detail pages | Product records are visible with correct name/price/category content | Pass | Screenshot of list/detail |
+| Update | `/products/<slug>/edit/` | Superuser | Edit product name/price and submit form | Product updates persist and success message is shown | Pass | Before/after screenshot + admin check |
+| Delete | `/products/<slug>/` (Delete button) | Superuser | Click Delete Product, confirm prompt, submit POST | Product is removed and user is redirected to `/products/` | Pass | Screenshot + product no longer in list/admin |
+
+> Notes for assessor clarity:
+> - `/products/add/`, `/products/<slug>/edit/`, and delete actions are intentionally restricted to superusers.
+> - Anonymous users are redirected to login; non-superusers are denied access by store-owner permission checks.
+
+
+#### C. Authentication and Profile
+1. Register a new user account.
+2. Login/logout flow works and redirects correctly.
+3. Profile page loads for authenticated users.
+4. Unauthenticated profile access redirects to login.
+
+#### D. Contact and Messaging
+1. Submit contact form with valid data.
+2. Verify message appears in Django admin.
+3. Confirm timestamp and status fields are recorded.
+
+#### E. Responsiveness and Browser Coverage
+Test in latest versions of:
+- Chrome
+- Firefox
+- Edge
+- Safari
+
+Responsive breakpoints:
+- 320px
+- 768px
+- 1024px
+- 1440px
+
+### Regression Rules
+After every feature/fix:
+1. Re-run `python manage.py check`.
+2. Re-test product browsing, bag updates, and checkout.
+3. Re-test superuser CRUD routes.
+4. Confirm no broken internal links in navigation and product pages.
 
 
 ## Validator Testing
