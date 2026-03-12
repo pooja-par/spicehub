@@ -24,7 +24,12 @@ def env_bool(name, default=False):
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY is missing — set it in environment variables")
+    #raise RuntimeError("SECRET_KEY is missing — set it in environment variables")
+    # Keep production strict, but avoid local/dev startup failures when env vars
+    # haven't been configured yet.
+    if os.getenv("RENDER") or os.getenv("DYNO"):
+        raise RuntimeError("SECRET_KEY is missing — set it in environment variables")
+    SECRET_KEY = 'dev-insecure-secret-key-change-me'
 
 DEBUG = env_bool("DEBUG", False)
 
