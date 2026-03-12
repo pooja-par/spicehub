@@ -91,7 +91,6 @@ Core user stories implemented in this project:
 
 Project planning and tracking were managed using an Agile board (e.g., Trello/Jira/GitHub Projects).
 
-- **Board URL**: `https://<your-agile-board-link>`
 - **Workflow columns**: Backlog → To Do → In Progress → Review/Test → Done
 - **Primary epics**: Product Catalogue, Bag/Checkout, Authentication/Profile, Marketing/SEO
 
