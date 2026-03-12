@@ -86,6 +86,27 @@ Core user stories implemented in this project:
 - As a registered user, I can view order history and maintain profile details for future checkouts.
 - As a store owner, I can create/read/update/delete products to keep catalogue data current.
 
+
+### Agile planning evidence and user-story mapping
+
+Project planning and tracking were managed using an Agile board (e.g., Trello/Jira/GitHub Projects).
+
+- **Board URL**: `https://<your-agile-board-link>`
+- **Workflow columns**: Backlog → To Do → In Progress → Review/Test → Done
+- **Primary epics**: Product Catalogue, Bag/Checkout, Authentication/Profile, Marketing/SEO
+
+| User Story ID | Story Summary | Board Card | Implementation Evidence | Status |
+|---|---|---|---|---|
+| US-01 | Browse and filter products | `Card: Product listing + filters` | `products/views.py` and products templates | Done |
+| US-02 | Add/remove products in bag | `Card: Bag interactions` | `bag/views.py`, `bag/templates/bag/bag.html` | Done |
+| US-03 | Complete Stripe checkout | `Card: Checkout + payment` | `checkout/views.py`, Stripe JS integration | Done |
+| US-04 | Register/login and manage profile | `Card: Auth + profile` | allauth routes/templates, `profiles/views.py` | Done |
+| US-05 | Superuser product CRUD | `Card: Product management` | add/edit/delete product views/routes | Done |
+| US-06 | Newsletter signup and social reach | `Card: Newsletter + social` | newsletter app + footer signup form | Done |
+
+> Replace placeholder Agile links/card references with your actual board URL and screenshot evidence before final submission.
+
+
 ### Data rationale (what data is stored and why)
 The application stores only the data required to provide store functionality:
 - **Catalogue data**: product names, descriptions, prices, categories, and images.
@@ -94,6 +115,32 @@ The application stores only the data required to provide store functionality:
 - **Contact data**: customer enquiries submitted via contact form for support follow-up.
 
 This data model supports both day-to-day operation (shopping and fulfilment) and administrative reporting in Django admin.
+
+
+### Database schema (explicit model documentation)
+
+The application uses a relational schema with these primary entities:
+
+| Model | Purpose | Key fields | Relationships |
+|---|---|---|---|
+| `Category` | Product grouping and catalogue filtering | `name`, `friendly_name`, `is_active` | One-to-many with `Product` |
+| `Product` | Sellable item in the store | `name`, `slug`, `price_per_kg`, `stock` | Many-to-one to `Category`; referenced by `OrderLineItem`; used by `FeaturedProduct` |
+| `Order` | Checkout transaction header | `order_number`, customer/delivery fields, totals | One-to-many with `OrderLineItem`; many-to-one to `UserProfile` |
+| `OrderLineItem` | Individual purchased product row | `order`, `product`, `quantity`, `lineitem_total` | Many-to-one to `Order`; many-to-one to `Product` |
+| `UserProfile` | Saved delivery data and order history anchor | default address/contact fields | One-to-one with Django `User`; one-to-many with `Order` |
+| `ContactMessage` | Customer enquiry/support records | `name`, `email`, `subject`, `message`, timestamps | Standalone support datastore entity |
+| `FeaturedProduct` | Homepage merchandising / featured content | `product`, `start_date`, `end_date`, `is_active` | Many-to-one to `Product` |
+| `NewsletterSubscriber` | Email marketing opt-in list | `email`, `created_at` | Standalone marketing datastore entity |
+
+#### Relationship summary
+- `Category (1) -> (Many) Product`
+- `UserProfile (1) -> (Many) Order`
+- `Order (1) -> (Many) OrderLineItem`
+- `Product (1) -> (Many) OrderLineItem`
+- `Product (1) -> (Many) FeaturedProduct`
+
+
+
 
 ### Security features and rationale
 Security decisions were made to reduce common e-commerce risks:
