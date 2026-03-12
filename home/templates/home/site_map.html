@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block extra_title %}- Sitemap{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Spice Hub Sitemap</h2>
+    <p class="text-muted">Use this page to quickly find key sections of the website.</p>
+
+    <h3 class="h5 mt-4">Main pages</h3>
+    <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'products' %}">All Products</a></li>
+        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+    </ul>
+
+    <h3 class="h5 mt-4">Account pages</h3>
+    <ul>
+        <li><a href="{% url 'account_login' %}">Login</a></li>
+        <li><a href="{% url 'account_signup' %}">Register</a></li>
+    </ul>
+</div>
+{% endblock %}

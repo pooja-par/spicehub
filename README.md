@@ -12,6 +12,91 @@ Author: Pooja Parmar
 
 To provide a seamless shopping experience for customers to browse and purchase high-quality spices. The website also allows the admin to manage products and orders efficiently.
 
+## 2.4 Project Rationale, Target Audience, and Security
+
+### Why this application was created
+SpiceHub was created to solve a practical problem for small-to-medium spice retailers: many have product lists on social media but no structured buying journey. The project provides a dedicated e-commerce flow where customers can discover products, compare options, and complete purchases reliably in one place.
+
+### Target audience and user stories
+Primary audience:
+- Home cooks and food enthusiasts seeking quality spices online.
+- Returning customers who need fast repeat ordering.
+
+Secondary audience:
+- Store owners/administrators who need low-friction product and order management.
+
+Core user stories implemented in this project:
+- As a shopper, I can browse by category and view product details so I can choose suitable items.
+- As a shopper, I can add/remove/update bag items so I can control my order before payment.
+- As a shopper, I can securely checkout and receive order confirmation so I trust the transaction outcome.
+- As a registered user, I can view order history and maintain profile details for future checkouts.
+- As a store owner, I can create/read/update/delete products to keep catalogue data current.
+
+### Data rationale (what data is stored and why)
+The application stores only the data required to provide store functionality:
+- **Catalogue data**: product names, descriptions, prices, categories, and images.
+- **Transaction data**: order records and line items needed for fulfilment and audit trail.
+- **Customer profile data**: delivery/contact details to improve repeat checkout usability.
+- **Contact data**: customer enquiries submitted via contact form for support follow-up.
+
+This data model supports both day-to-day operation (shopping and fulfilment) and administrative reporting in Django admin.
+
+### Security features and rationale
+Security decisions were made to reduce common e-commerce risks:
+- **Django CSRF protection** on forms to prevent forged requests.
+- **Authentication and authorization controls** via allauth plus role checks for admin CRUD routes.
+- **Environment-variable secrets management** for API keys and sensitive settings.
+- **Stripe hosted payment handling** in test/production modes to avoid storing card details directly in app databases.
+- **Server-side validation** on key forms to protect data integrity beyond client-side checks.
+
+Together, these decisions align with the project goal of offering a trustworthy and maintainable online store experience.
+
+
+## 2.5 UX Design Process, Artifacts, and Implementation Traceability
+
+### Design process followed
+The UX process for SpiceHub followed an iterative path:
+1. **Discovery**: define shopper and admin goals, identify pain points in social-only sales flows.
+2. **Information architecture**: decide primary pages and navigation labels (Home, Products, Product Detail, Bag, Checkout, Profile, Contact).
+3. **Low-fidelity wireframing**: sketch layout structure for homepage and shopping journey pages.
+4. **Responsive mockups**: validate desktop and mobile composition before implementation.
+5. **Implementation + review**: build Django templates/components and verify against wireframe intent during manual testing.
+
+### UX artifacts produced
+
+| Artifact | Purpose in design process | Evidence |
+|---|---|---|
+| Homepage wireframe | Establish hero content, category/product focus, and navigation priority. | `static/images/wireframehome.png` |
+| Desktop mockup | Validate spacing, component hierarchy, and desktop readability. | `static/images/desktopmokup.png` |
+| Mobile mockup | Validate responsive stacking, touch targets, and mobile usability. | `static/images/mobilemockup.png` |
+
+### Design reasoning and implementation mapping
+
+| Design Decision | UX Reasoning | Implemented Outcome |
+|---|---|---|
+| Prominent product discovery paths | Reduce time-to-product for first-time visitors | Product list and detail pages are available directly from primary navigation |
+| Simple bag interaction model | Make quantity changes and removal obvious | Bag page supports update/remove with recalculated totals |
+| Streamlined checkout form | Reduce abandonment by minimising confusion | Checkout combines required delivery fields with clear payment flow |
+| Account/profile area | Improve repeat-purchase convenience | Authenticated users can review order history and stored profile data |
+| Admin CRUD routes for products | Keep catalogue current without code changes | Superuser-only add/edit/delete product journeys implemented |
+
+### User flow diagram used in implementation
+
+```mermaid
+flowchart TD
+    A[Home] --> B[Products Listing]
+    B --> C[Product Detail]
+    C --> D[Bag]
+    D --> E[Checkout]
+    E --> F[Order Success]
+    A --> G[Login / Signup]
+    G --> H[Profile + Order History]
+    I[Superuser] --> J[Add/Edit/Delete Product]
+```
+
+This flow reflects the implemented page-to-page journeys and was used as a reference to keep UI navigation and permissions consistent.
+
+
 ## Features
 
 - **Responsive Design**: The application is optimized for various screen sizes, including desktops, tablets, and mobile devices.

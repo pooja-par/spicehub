@@ -34,3 +34,14 @@ def add_to_cart(request, product_id):
 
     return redirect('cart')
 '''
+
+def site_map(request):
+    """Render an HTML sitemap page for users and crawlers."""
+
+    return render(request, "home/site_map.html")
+
+
+def custom_404(request, exception):
+    """Render custom 404 page."""
+
+    return render(request, "404.html", status=404)
