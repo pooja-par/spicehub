@@ -107,14 +107,62 @@ class ProductManagementViewsTests(TestCase):
         self.assertEqual(self.product.name, 'Garlic Flakes Premium')
         self.assertEqual(str(self.product.price_per_kg), '24.00')
 
-    def test_regular_user_cannot_access_add_or_edit_product_forms(self):
+    def test_anonymous_user_is_redirected_to_login_for_product_management_views(self):
+        add_response = self.client.get(reverse('add_product'))
+        edit_response = self.client.get(reverse('edit_product', args=[self.product.slug]))
+        delete_response = self.client.get(reverse('delete_product', args=[self.product.slug]))
+
+        self.assertEqual(add_response.status_code, 302)
+        self.assertIn(reverse('account_login'), add_response.url)
+        self.assertEqual(edit_response.status_code, 302)
+        self.assertIn(reverse('account_login'), edit_response.url)
+        self.assertEqual(delete_response.status_code, 302)
+        self.assertIn(reverse('account_login'), delete_response.url)
+
+    def test_regular_user_gets_forbidden_for_product_management_views(self):
         self.client.login(username='shopper', password='testpass123')
 
         add_response = self.client.get(reverse('add_product'))
         edit_response = self.client.get(reverse('edit_product', args=[self.product.slug]))
+        delete_response = self.client.get(reverse('delete_product', args=[self.product.slug]))
 
-        self.assertEqual(add_response.status_code, 302)
-        self.assertEqual(edit_response.status_code, 302)
+        self.assertEqual(add_response.status_code, 403)
+        self.assertEqual(edit_response.status_code, 403)
+        self.assertEqual(delete_response.status_code, 403)
+
+    def test_regular_user_cannot_post_to_product_management_views(self):
+        self.client.login(username='shopper', password='testpass123')
+
+        add_response = self.client.post(reverse('add_product'), data={
+            'category': self.category.id,
+            'sku': 'SKU-LOCKED',
+            'name': 'Blocked Product',
+            'slug': '',
+            'description': 'Should never be created',
+            'price_per_kg': '10.00',
+            'stock': 3,
+        })
+        edit_response = self.client.post(
+            reverse('edit_product', args=[self.product.slug]),
+            data={
+                'category': self.category.id,
+                'sku': self.product.sku,
+                'name': 'Unauthorized Update',
+                'slug': self.product.slug,
+                'description': self.product.description,
+                'price_per_kg': '22.00',
+                'stock': self.product.stock,
+            },
+        )
+        delete_response = self.client.post(reverse('delete_product', args=[self.product.slug]))
+
+        self.assertEqual(add_response.status_code, 403)
+        self.assertEqual(edit_response.status_code, 403)
+        self.assertEqual(delete_response.status_code, 403)
+        self.assertFalse(Product.objects.filter(name='Blocked Product').exists())
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.name, 'Garlic Flakes')
+        self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
 
 
 class ProductCustomLogicTests(TestCase):

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -137,15 +138,13 @@ def _require_superuser(request):
     """Only superusers can access product management forms."""
     if not request.user.is_superuser:
         messages.error(request, 'Sorry, only store owners can manage products.')
-        return False
-    return True
+        raise PermissionDenied
 
 
 @login_required
 def add_product(request):
     """Add a product to the store."""
-    if not _require_superuser(request):
-        return redirect(reverse('home'))
+    _require_superuser(request)
 
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -171,8 +170,7 @@ def add_product(request):
 @login_required
 def edit_product(request, product_slug):
     """Edit an existing product."""
-    if not _require_superuser(request):
-        return redirect(reverse('home'))
+    _require_superuser(request)
 
     product = get_object_or_404(Product, slug=product_slug)
 
@@ -201,8 +199,7 @@ def edit_product(request, product_slug):
 @login_required
 def delete_product(request, product_slug):
     """Delete an existing product."""
-    if not _require_superuser(request):
-        return redirect(reverse('home'))
+    _require_superuser(request)
 
     product = get_object_or_404(Product, slug=product_slug)
 
