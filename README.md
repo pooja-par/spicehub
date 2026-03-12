@@ -321,14 +321,7 @@ Checkout flow:
 ## Complete Deployment Procedure
 
 ### Database Strategy
-SpiceHub supports two database options:
-
-1. **SQLite for local development** (default).
-2. **PostgreSQL for production** via `DATABASE_URL`.
-
-The app reads `DATABASE_URL` first. If it is missing, it falls back to SQLite. This behavior is configured in `spicehub/settings.py`.
-
-### 1) Deploy to Render (recommended)
+### Deploy to Render (recommended)
 
 1. Create a new **Web Service** in Render from the GitHub repository.
 2. Use these build/start commands:
@@ -359,35 +352,6 @@ The app reads `DATABASE_URL` first. If it is missing, it falls back to SQLite. T
    ```
 9. Verify static/media configuration and confirm admin login works.
 
-### 2) Local Deployment / Development
-
-1. Clone repository:
-   ```bash
-   git clone https://github.com/pooja-par/spicehub.git
-   cd spicehub
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Set local environment variables (example):
-   ```bash
-   export SECRET_KEY="dev-secret-key"
-   export DEBUG=1
-   ```
-4. Apply migrations:
-   ```bash
-   python manage.py migrate
-   ```
-5. Load fixtures (optional):
-   ```bash
-   python manage.py loaddata products/fixtures/categories.json
-   python manage.py loaddata products/fixtures/products.json
-   ```
-6. Run server:
-   ```bash
-   python manage.py runserver
-   ```
 
 ## Complete Testing Procedure
 
@@ -435,7 +399,6 @@ Expected outcomes:
 > - `/products/add/`, `/products/<slug>/edit/`, and delete actions are intentionally restricted to superusers.
 > - Anonymous users are redirected to login; non-superusers are denied access by store-owner permission checks.
 
-
 #### C. Authentication and Profile
 1. Register a new user account.
 2. Login/logout flow works and redirects correctly.
@@ -450,7 +413,6 @@ Expected outcomes:
 #### E. Responsiveness and Browser Coverage
 Test in latest versions of:
 - Chrome
-- Firefox
 - Edge
 - Safari
 
@@ -467,13 +429,9 @@ After every feature/fix:
 3. Re-test superuser CRUD routes.
 4. Confirm no broken internal links in navigation and product pages.
 
-
 ## Validator Testing
 HTML: Passed through the W3C validator with no errors.
 CSS: No issues found using the Jigsaw CSS validator.
-
-## Unfixed Bugs
-W3C validator shows minor warnings related to Django template syntax, which do not impact the application’s functionality.
 
 ## Credits
 # Media & Content
