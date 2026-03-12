@@ -28,6 +28,10 @@ if not SECRET_KEY:
 
 DEBUG = env_bool("DEBUG", False)
 
+# Never expose debug pages in hosted environments, even if DEBUG is set.
+if os.getenv("RENDER") or os.getenv("DYNO"):
+    DEBUG = False
+
 import cloudinary  # noqa: E402,F401
 import cloudinary.uploader  # noqa: E402,F401
 import cloudinary.api  # noqa: E402,F401
@@ -73,6 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
 
     # Allauth
     'allauth',
