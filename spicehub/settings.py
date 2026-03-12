@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'profiles',
     'contact',
     'featured',
+    'newsletter',
 
     # Other
     'crispy_forms',
@@ -139,6 +140,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'bag.contexts.bag_contents',
                 'featured.context_processors.featured_products',
+                'newsletter.context_processors.newsletter_signup_form',
             ],
             'builtins': [
                 'crispy_forms.templatetags.crispy_forms_tags',

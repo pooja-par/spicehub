@@ -171,6 +171,19 @@
                         <li><a href="{% url 'site_map' %}" class="text-white">Sitemap</a></li>
                     </ul>
                 </div>
+                <!-- Newsletter Column -->
+                <div class="col-md-6">
+                    <h5 class="text-uppercase mb-3">Newsletter Signup</h5>
+                    <p class="mb-2">Get recipes, product updates, and seasonal offers in your inbox.</p>
+                    <form method="post" action="{% url 'newsletter_signup' %}" class="form-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <div class="form-group mb-2 mr-2 flex-grow-1" style="min-width: 220px;">
+                            {{ newsletter_form.email }}
+                        </div>
+                        <button type="submit" class="btn btn-outline-light mb-2">Subscribe</button>
+                    </form>
+                </div>
 
             </div>
 
